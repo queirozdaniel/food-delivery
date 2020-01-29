@@ -5,24 +5,39 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@JsonIgnoreProperties("hibernateLazyInitializer")
-@Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Data
 @Entity
-public class Cozinha {
-	
+public class Endereco {
+
 	@EqualsAndHashCode.Include
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	
 	@Column(nullable = false)
-	private String nome;
-
+	private String cep;
+	
+	@Column(nullable = false)
+	private String logradouro;
+	
+	@Column(nullable = false)
+	private String numero;
+	
+	@Column(nullable = true)
+	private String complemento;
+	
+	@Column(nullable = false)
+	private String bairro;
+	
+	@ManyToOne
+	@JoinColumn( nullable = false)
+	private Cidade cidade;
+	
 }
