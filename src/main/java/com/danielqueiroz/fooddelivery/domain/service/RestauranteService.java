@@ -48,5 +48,9 @@ public class RestauranteService {
 		return restauranteRepository.findById(id).get();
 	}
 	
+	public int totalRestaurantesPorCozinhaId(Long id) {
+		return restauranteRepository.countByCozinhaId(id);
+	}
+	
 	
 }

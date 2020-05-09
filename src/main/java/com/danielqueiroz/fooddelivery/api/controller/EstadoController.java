@@ -6,7 +6,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,61 +14,63 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
-import com.danielqueiroz.fooddelivery.domain.model.Cozinha;
-import com.danielqueiroz.fooddelivery.domain.service.CozinhaService;
+import com.danielqueiroz.fooddelivery.domain.model.Estado;
+import com.danielqueiroz.fooddelivery.domain.service.EstadoService;
 
 @RestController
-@RequestMapping(value = "/cozinhas", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-public class CozinhaController {
+@RequestMapping("/estados")
+public class EstadoController {
 
 	@Autowired
-	private CozinhaService cozinhaService;
-	
+	private EstadoService estadoService;
+
 	@GetMapping
-	public List<Cozinha> listarTodas(){
-		return cozinhaService.buscarTodos();
+	public List<Estado> buscarTodos() {
+		return estadoService.buscarTodos();
 	}
-	
+
 	@GetMapping("/{id}")
-	public ResponseEntity<Cozinha> buscarPorId(@PathVariable("id") Long id) {
+	public ResponseEntity<Estado> buscarPorId(@PathVariable Long id) {
 		try {
-			return ResponseEntity.ok(cozinhaService.buscarPorId(id));
+			return ResponseEntity.ok(estadoService.buscarPorId(id));
 
 		} catch (EntidadeNaoEncontradaException ex) {
 			return ResponseEntity.notFound().build();
 		}
 	}
-	
+
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cozinha adicionar(@RequestBody Cozinha cozinha) {
-		return cozinhaService.salvar(cozinha);
+	public Estado salvar(@RequestBody Estado estado) {
+		return estadoService.salvar(estado);
 	}
-	
+
 	@PutMapping("/{id}")
-	public ResponseEntity<Cozinha> atualizar(@RequestBody Cozinha cozinha, @PathVariable Long id) {
+	public ResponseEntity<Estado> atualizar(@RequestBody Estado estado, @PathVariable Long id) {
+
 		try {
-			Cozinha cozinhaRetornada = cozinhaService.buscarPorId(id);
+			Estado estadoRetornado = estadoService.buscarPorId(id);
 
-			BeanUtils.copyProperties(cozinha, cozinhaRetornada, "id");
-			cozinhaService.salvar(cozinhaRetornada);
+			BeanUtils.copyProperties(estado, estadoRetornado, "id");
+			estadoService.salvar(estadoRetornado);
 
-			return ResponseEntity.ok(cozinhaRetornada);
+			return ResponseEntity.ok(estadoRetornado);
 		} catch (EntidadeNaoEncontradaException ex) {
 			return ResponseEntity.notFound().build();
+
 		}
+
 	}
-	
-	@DeleteMapping(value ="/{id}")
-	public ResponseEntity<Cozinha> deletar(@PathVariable Long id) {
-		
+
+	@DeleteMapping(value = "/{id}")
+	public ResponseEntity<Estado> deletar(@PathVariable Long id) {
+
 		try {
-			cozinhaService.deletar(id);
+			estadoService.delete(id);
 			return ResponseEntity.noContent().build();
 	
 		} catch (DataIntegrityViolationException ex) {
@@ -79,20 +80,7 @@ public class CozinhaController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-	
-	@GetMapping("/nome")
-	public ResponseEntity<?> pesquisaEmNome(String nome){
-		try {
-			return ResponseEntity.ok(cozinhaService.buscarPorNome(nome));
 
-		} catch (EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.notFound().build();
-		}
-	}
 	
-	@GetMapping("/todas")
-	public List<Cozinha> listarTodasQueContemEmNome(@RequestParam String nome){
-		return cozinhaService.buscarTodasContemNoNome(nome);
-	}
 	
 }
