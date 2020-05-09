@@ -51,6 +51,6 @@ public class RestauranteService {
 	public int totalRestaurantesPorCozinhaId(Long id) {
 		return restauranteRepository.countByCozinhaId(id);
 	}
-	
+
 	
 }

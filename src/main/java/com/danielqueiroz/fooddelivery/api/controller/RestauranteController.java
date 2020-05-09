@@ -1,6 +1,7 @@
 package com.danielqueiroz.fooddelivery.api.controller;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
+import com.danielqueiroz.fooddelivery.domain.repository.RestauranteRepository;
 import com.danielqueiroz.fooddelivery.domain.service.RestauranteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -32,6 +34,9 @@ public class RestauranteController {
 
 	@Autowired
 	private RestauranteService restauranteService;
+	
+	@Autowired 
+	private RestauranteRepository restauranteRepository;
 
 	@GetMapping
 	public List<Restaurante> buscarTodos() {
@@ -74,6 +79,17 @@ public class RestauranteController {
 	public int totalPorCozinhaId(Long id) {
 		return restauranteService.totalRestaurantesPorCozinhaId(id);
 	}
+	
+	@GetMapping("/porNome")
+	public List<Restaurante> buscarTodosPorNomeECozinha(String nome, Long id) {
+		return restauranteRepository.consultaPorNomeECozinha(nome, id);
+	}
+	
+	@GetMapping("/porNomeTaxa")
+	public List<Restaurante> buscaTodosPorNomeEFrete(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal) {
+		return restauranteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
+	}
+	
 	
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Restaurante> deletar(@PathVariable Long id) {

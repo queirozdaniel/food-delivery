@@ -13,8 +13,8 @@ import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 @Repository
 public interface RestauranteRepository extends JpaRepository<Restaurante, Long>, RestauranteRepositoryQueries{
 
-	@Query("form Restaurante where nome like %:nome% and cozinha.id = :id")
-	List<Restaurante> consultaPorNomeECozinha(String nome,@Param("id") Long cozinhaId);
+	@Query("from Restaurante where nome like %:nome% and cozinha.id = :id")
+	List<Restaurante> consultaPorNomeECozinha(String nome,@Param("id") Long id);
 	
 	List<Restaurante> find(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal);
 
