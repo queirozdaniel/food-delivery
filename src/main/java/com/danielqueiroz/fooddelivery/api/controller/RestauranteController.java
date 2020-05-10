@@ -26,6 +26,9 @@ import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaExce
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 import com.danielqueiroz.fooddelivery.domain.repository.RestauranteRepository;
 import com.danielqueiroz.fooddelivery.domain.service.RestauranteService;
+import com.danielqueiroz.fooddelivery.infrastructure.repository.spec.RestauranteComFreteGratisSpec;
+import com.danielqueiroz.fooddelivery.infrastructure.repository.spec.RestauranteComMesmoNomeSpec;
+import com.danielqueiroz.fooddelivery.infrastructure.repository.spec.RestauranteSpecFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
@@ -90,6 +93,13 @@ public class RestauranteController {
 		return restauranteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
 	}
 	
+	@GetMapping("/comFreteGratis")
+	public List<Restaurante> buscaTodosComFreteGrasi(String nome) {
+	
+		return restauranteRepository.findAll(
+				RestauranteSpecFactory.comFreteGratis()
+				.and(RestauranteSpecFactory.comNomeSemelhante(nome)));
+	}
 	
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Restaurante> deletar(@PathVariable Long id) {
