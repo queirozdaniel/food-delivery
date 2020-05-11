@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,6 @@ import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaExce
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 import com.danielqueiroz.fooddelivery.domain.repository.RestauranteRepository;
 import com.danielqueiroz.fooddelivery.domain.service.RestauranteService;
-import com.danielqueiroz.fooddelivery.infrastructure.repository.spec.RestauranteComFreteGratisSpec;
-import com.danielqueiroz.fooddelivery.infrastructure.repository.spec.RestauranteComMesmoNomeSpec;
-import com.danielqueiroz.fooddelivery.infrastructure.repository.spec.RestauranteSpecFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
@@ -68,7 +66,7 @@ public class RestauranteController {
 		try {
 			Restaurante restauranteRetornado = restauranteService.buscarPorId(id);
 
-			BeanUtils.copyProperties(restaurante, restauranteRetornado, "id");
+			BeanUtils.copyProperties(restaurante, restauranteRetornado, "id", "formasPagamento", "endereco", "dataCadastro");
 			restauranteService.salvar(restauranteRetornado);
 
 			return ResponseEntity.ok(restauranteRetornado);
@@ -95,10 +93,12 @@ public class RestauranteController {
 	
 	@GetMapping("/comFreteGratis")
 	public List<Restaurante> buscaTodosComFreteGrasi(String nome) {
+		return restauranteRepository.findComFreteGratis(nome);
+	}
 	
-		return restauranteRepository.findAll(
-				RestauranteSpecFactory.comFreteGratis()
-				.and(RestauranteSpecFactory.comNomeSemelhante(nome)));
+	@GetMapping("/primeiro")
+	public Optional<Restaurante> buscaOPrimeiro() {
+		return restauranteRepository.buscarPrimeiro();
 	}
 	
 	@DeleteMapping(value = "/{id}")

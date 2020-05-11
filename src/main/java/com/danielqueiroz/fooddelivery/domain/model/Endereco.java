@@ -1,10 +1,7 @@
 package com.danielqueiroz.fooddelivery.domain.model;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -13,31 +10,26 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Data
-@Entity
+@Embeddable
 public class Endereco {
 
-	@EqualsAndHashCode.Include
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@Column(nullable = false)
+	@Column(name ="endereco_cep", nullable = true)
 	private String cep;
 	
-	@Column(nullable = false)
+	@Column(name ="endereco_logradouro",nullable = true)
 	private String logradouro;
 	
-	@Column(nullable = false)
+	@Column(name ="endereco_numero",nullable = true)
 	private String numero;
 	
-	@Column(nullable = true)
+	@Column(name ="endereco_complemento",nullable = true)
 	private String complemento;
 	
-	@Column(nullable = false)
+	@Column(name ="endereco_bairro",nullable = true)
 	private String bairro;
 	
 	@ManyToOne
-	@JoinColumn( nullable = false)
+	@JoinColumn(name ="endereco_cidade_id", nullable = true)
 	private Cidade cidade;
 	
 }
