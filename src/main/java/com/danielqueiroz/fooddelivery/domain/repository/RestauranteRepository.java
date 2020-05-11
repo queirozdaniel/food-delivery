@@ -16,6 +16,9 @@ public interface RestauranteRepository extends CustomJpaRepository<Restaurante, 
 	@Query("from Restaurante where nome like %:nome% and cozinha.id = :id")
 	List<Restaurante> consultaPorNomeECozinha(String nome,@Param("id") Long id);
 	
+	@Query("from Restaurante r join r.cozinha")
+	List<Restaurante> findAll();
+	
 	List<Restaurante> find(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal);
 
 	int countByCozinhaId(Long cozinha);
