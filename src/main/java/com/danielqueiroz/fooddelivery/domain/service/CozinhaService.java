@@ -1,10 +1,10 @@
 package com.danielqueiroz.fooddelivery.domain.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeEmUsoException;
@@ -15,6 +15,9 @@ import com.danielqueiroz.fooddelivery.domain.repository.CozinhaRepository;
 @Service
 public class CozinhaService {
 
+	private static final String MSG_COZINHA_NAO_ENCONTRADA = "Cozinha com código %d não encontrado";
+	private static final String MSG_COZINHA_EM_USO = "Cozinha com código %d não pode ser removido, pois está sendo usado";
+
 	@Autowired
 	private CozinhaRepository repository;
 
@@ -22,51 +25,41 @@ public class CozinhaService {
 		return repository.save(cozinha);
 	}
 
-	public void excluir(Long id) {
-		Optional<Cozinha> cozinha = repository.findById(id);
-		try {
-			if (cozinha.isPresent()) {
-				repository.deleteById(id);
-
-			}
-			throw new EntidadeNaoEncontradaException(String.format("Não existe cozinha com código", id));
-		} catch (DataIntegrityViolationException ex) {
-			throw new EntidadeEmUsoException(
-					String.format("Cozinha de códifo %d não pode ser removida pois está em uso", id));
-		}
-
-	}
-
 	public void deletar(Long id) {
-		if (repository.findById(id).isEmpty()) {
-			throw new EntidadeNaoEncontradaException(String.format("Cozinha com código %d não encontrado", id));
+		try {
+			repository.deleteById(id);
+		} catch (EmptyResultDataAccessException ex) {
+			throw new EntidadeNaoEncontradaException(String.format(MSG_COZINHA_NAO_ENCONTRADA, id));
+		} catch (DataIntegrityViolationException ex) {
+			throw new EntidadeEmUsoException(String.format(MSG_COZINHA_EM_USO, id));
 		}
-		repository.deleteById(id);
+
 	}
-	
-	public List<Cozinha> buscarTodos(){
+
+	public List<Cozinha> buscarTodos() {
 		return repository.findAll();
 	}
-	
+
 	public Cozinha buscarPorId(Long id) {
-		if (repository.findById(id).isEmpty()) {
-			throw new EntidadeNaoEncontradaException(String.format("Cozinha com código %d não encontrado", id));
+		try {
+			return repository.findById(id).get();
+
+		} catch (EmptyResultDataAccessException ex) {
+			throw new EntidadeNaoEncontradaException(String.format(MSG_COZINHA_NAO_ENCONTRADA, id));
 		}
-		
-		return repository.findById(id).get();
 	}
-	
-	
+
 	public List<Cozinha> buscarTodasContemNoNome(String nome) {
 		return repository.findByNomeContaining(nome);
 	}
 
 	public Cozinha buscarPorNome(String nome) {
-		Optional<Cozinha> cozinha = repository.findByNome(nome);
-		if (cozinha.isPresent()) {
-			return cozinha.get();
+		try {
+			return repository.findByNome(nome).get();
+
+		} catch (EmptyResultDataAccessException ex) {
+			throw new EntidadeNaoEncontradaException(String.format("Cozinha com nome %s não encontrado", nome));
 		}
-		throw new EntidadeNaoEncontradaException(String.format("Cozinha com nome %s não encontrado", nome));
 	}
 
 }

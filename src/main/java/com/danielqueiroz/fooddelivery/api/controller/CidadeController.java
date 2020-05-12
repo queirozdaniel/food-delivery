@@ -70,7 +70,7 @@ public class CidadeController {
 	public ResponseEntity<Cidade> deletar(@PathVariable Long id) {
 
 		try {
-			cidadeService.delete(id);
+			cidadeService.deletar(id);
 			return ResponseEntity.noContent().build();
 
 		} catch (DataIntegrityViolationException ex) {

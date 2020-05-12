@@ -70,7 +70,7 @@ public class EstadoController {
 	public ResponseEntity<Estado> deletar(@PathVariable Long id) {
 
 		try {
-			estadoService.delete(id);
+			estadoService.deletar(id);
 			return ResponseEntity.noContent().build();
 	
 		} catch (DataIntegrityViolationException ex) {

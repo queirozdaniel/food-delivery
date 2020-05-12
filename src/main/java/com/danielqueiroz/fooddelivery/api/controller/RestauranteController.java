@@ -105,7 +105,7 @@ public class RestauranteController {
 	public ResponseEntity<Restaurante> deletar(@PathVariable Long id) {
 
 		try {
-			restauranteService.delete(id);
+			restauranteService.deletar(id);
 			return ResponseEntity.noContent().build();
 	
 		} catch (DataIntegrityViolationException ex) {

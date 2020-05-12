@@ -1,10 +1,10 @@
 package com.danielqueiroz.fooddelivery.domain.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeEmUsoException;
@@ -15,6 +15,9 @@ import com.danielqueiroz.fooddelivery.domain.repository.EstadoRepository;
 @Service
 public class EstadoService {
 
+	private static final String MSG_ESTADO_NAO_ENCONTRADA = "Estado com código %d não encontrado";
+	private static final String MSG_ESTADO_EM_USO = "Estado com código %d não pode ser removido, pois está sendo usado";
+	
 	@Autowired
 	private EstadoRepository estadoRepository;
 
@@ -22,34 +25,21 @@ public class EstadoService {
 		return estadoRepository.save(estado);
 	}
 
-	public void excluir(Long id) {
-		Optional<Estado> estado = estadoRepository.findById(id);
+	public void deletar(Long id) {
+
 		try {
-			if (estado.isPresent()) {
-				estadoRepository.deleteById(id);
-
-			}
-			throw new EntidadeNaoEncontradaException(String.format("Não existe estado com código %d", id));
-		} catch (DataIntegrityViolationException ex) {
-			throw new EntidadeEmUsoException(
-					String.format("Estado de códifo %d não pode ser removida pois está em uso", id));
+			estadoRepository.deleteById(id);
+		} catch (EmptyResultDataAccessException ex) {
+			throw new EntidadeNaoEncontradaException(String.format(MSG_ESTADO_NAO_ENCONTRADA, id));
+		} catch (DataIntegrityViolationException e) {
+			throw new EntidadeEmUsoException(String.format(MSG_ESTADO_EM_USO, id));
 		}
 
-	}
-
-	public void delete(Long id) {
-		if (estadoRepository.findById(id).isEmpty()) {
-			throw new EntidadeNaoEncontradaException(String.format("Estado com código %d não encontrado", id));
-		}
-		estadoRepository.deleteById(id);
 	}
 
 	public Estado buscarPorId(Long id) {
-		if (estadoRepository.findById(id).isEmpty()) {
-			throw new EntidadeNaoEncontradaException(String.format("Estado com código %d não encontrado", id));
-		}
+			return estadoRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(MSG_ESTADO_NAO_ENCONTRADA, id)));
 
-		return estadoRepository.findById(id).get();
 	}
 
 	public List<Estado> buscarTodos() {
