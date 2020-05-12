@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeEmUsoException;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
+import com.danielqueiroz.fooddelivery.domain.exception.EstadoNaoEncontradoException;
 import com.danielqueiroz.fooddelivery.domain.model.Cidade;
 import com.danielqueiroz.fooddelivery.domain.repository.CidadeRepository;
 import com.danielqueiroz.fooddelivery.domain.repository.EstadoRepository;
@@ -27,12 +28,11 @@ public class CidadeService {
 	
 	
 	public Cidade salvar(Cidade cidade) {
-		// TODO: Implementar o retorno de um BadRequest caso não seja passado o Id do Estado
-		if (!estadoRepository.findById(cidade.getEstado().getId()).isEmpty()) {
-			return cidadeRepository.save(cidade);
+		Long id = cidade.getEstado().getId();
+		if (estadoRepository.findById(id).isEmpty()) {
+			throw new EstadoNaoEncontradoException(id);
 		}
-
-		return null;
+		return cidadeRepository.save(cidade);
 	}
 
 	public List<Cidade> buscarTodos() {

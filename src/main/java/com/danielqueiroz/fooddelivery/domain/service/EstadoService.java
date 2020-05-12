@@ -8,14 +8,13 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeEmUsoException;
-import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
+import com.danielqueiroz.fooddelivery.domain.exception.EstadoNaoEncontradoException;
 import com.danielqueiroz.fooddelivery.domain.model.Estado;
 import com.danielqueiroz.fooddelivery.domain.repository.EstadoRepository;
 
 @Service
 public class EstadoService {
 
-	private static final String MSG_ESTADO_NAO_ENCONTRADA = "Estado com código %d não encontrado";
 	private static final String MSG_ESTADO_EM_USO = "Estado com código %d não pode ser removido, pois está sendo usado";
 	
 	@Autowired
@@ -30,7 +29,7 @@ public class EstadoService {
 		try {
 			estadoRepository.deleteById(id);
 		} catch (EmptyResultDataAccessException ex) {
-			throw new EntidadeNaoEncontradaException(String.format(MSG_ESTADO_NAO_ENCONTRADA, id));
+			throw new EstadoNaoEncontradoException(id);
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(String.format(MSG_ESTADO_EM_USO, id));
 		}
@@ -38,7 +37,7 @@ public class EstadoService {
 	}
 
 	public Estado buscarPorId(Long id) {
-			return estadoRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(MSG_ESTADO_NAO_ENCONTRADA, id)));
+			return estadoRepository.findById(id).orElseThrow(() -> new EstadoNaoEncontradoException(id));
 
 	}
 

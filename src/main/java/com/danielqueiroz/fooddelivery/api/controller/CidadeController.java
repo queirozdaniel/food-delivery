@@ -18,13 +18,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
+import com.danielqueiroz.fooddelivery.domain.exception.EstadoNaoEncontradoException;
+import com.danielqueiroz.fooddelivery.domain.exception.NegocioException;
 import com.danielqueiroz.fooddelivery.domain.model.Cidade;
 import com.danielqueiroz.fooddelivery.domain.service.CidadeService;
 
 @RestController
 @RequestMapping("/cidades")
 public class CidadeController {
-	
+
 	@Autowired
 	private CidadeService cidadeService;
 
@@ -46,23 +48,22 @@ public class CidadeController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cidade salvar(@RequestBody Cidade cidade) {
-		return cidadeService.salvar(cidade);
+		try {
+			return cidadeService.salvar(cidade);
+		} catch (EstadoNaoEncontradoException e) {
+			throw new NegocioException(e.getMessage(), e);
+		}
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Cidade> atualizar(@RequestBody Cidade cidade, @PathVariable Long id) {
 
-		try {
-			Cidade cidadeRetornada = cidadeService.buscarPorId(id);
+		Cidade cidadeRetornada = cidadeService.buscarPorId(id);
 
-			BeanUtils.copyProperties(cidade, cidadeRetornada, "id");
-			cidadeService.salvar(cidadeRetornada);
+		BeanUtils.copyProperties(cidade, cidadeRetornada, "id");
+		cidadeService.salvar(cidadeRetornada);
 
-			return ResponseEntity.ok(cidadeRetornada);
-		} catch (EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.notFound().build();
-
-		}
+		return ResponseEntity.ok(cidadeRetornada);
 
 	}
 
