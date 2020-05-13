@@ -1,10 +1,8 @@
 package com.danielqueiroz.fooddelivery.api.controller;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
-import com.danielqueiroz.fooddelivery.domain.repository.RestauranteRepository;
 import com.danielqueiroz.fooddelivery.domain.service.RestauranteService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,9 +37,6 @@ public class RestauranteController {
 
 	@Autowired
 	private RestauranteService restauranteService;
-
-	@Autowired
-	private RestauranteRepository restauranteRepository;
 
 	@GetMapping
 	public List<Restaurante> buscarTodos() {
@@ -82,32 +76,6 @@ public class RestauranteController {
 
 	}
 
-	@GetMapping("/total")
-	public int totalPorCozinhaId(Long id) {
-		return restauranteService.totalRestaurantesPorCozinhaId(id);
-	}
-
-	@GetMapping("/porNome")
-	public List<Restaurante> buscarTodosPorNomeECozinha(String nome, Long id) {
-		return restauranteRepository.consultaPorNomeECozinha(nome, id);
-	}
-
-	@GetMapping("/porNomeTaxa")
-	public List<Restaurante> buscaTodosPorNomeEFrete(String nome, BigDecimal taxaFreteInicial,
-			BigDecimal taxaFreteFinal) {
-		return restauranteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
-	}
-
-	@GetMapping("/comFreteGratis")
-	public List<Restaurante> buscaTodosComFreteGrasi(String nome) {
-		return restauranteRepository.findComFreteGratis(nome);
-	}
-
-	@GetMapping("/primeiro")
-	public Optional<Restaurante> buscaOPrimeiro() {
-		return restauranteRepository.buscarPrimeiro();
-	}
-
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Restaurante> deletar(@PathVariable Long id) {
 
@@ -124,7 +92,8 @@ public class RestauranteController {
 	}
 
 	@PatchMapping("/{id}")
-	public ResponseEntity<?> atualizarParcial(@RequestBody Map<String, Object> campos, @PathVariable Long id, HttpServletRequest request) {
+	public ResponseEntity<?> atualizarParcial(@RequestBody Map<String, Object> campos, @PathVariable Long id,
+			HttpServletRequest request) {
 
 		Restaurante restauranteAtual = restauranteService.buscarPorId(id);
 		if (restauranteAtual == null) {
@@ -137,9 +106,9 @@ public class RestauranteController {
 	}
 
 	private void modificaCampos(Map<String, Object> campos, Restaurante restauranteAtual, HttpServletRequest request) {
-		
+
 		ServletServerHttpRequest serverHttpRequest = new ServletServerHttpRequest(request);
-		
+
 		// TODO: Criar um Bean para fazer o acesso aos valores
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
