@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,12 +56,12 @@ public class RestauranteController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Restaurante salvar(@RequestBody Restaurante restaurante) {
+	public Restaurante salvar(@RequestBody @Valid Restaurante restaurante) {
 		return restauranteService.salvar(restaurante);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Restaurante> atualizar(@RequestBody Restaurante restaurante, @PathVariable Long id) {
+	public ResponseEntity<Restaurante> atualizar(@RequestBody @Valid Restaurante restaurante, @PathVariable Long id) {
 
 		try {
 			Restaurante restauranteRetornado = restauranteService.buscarPorId(id);

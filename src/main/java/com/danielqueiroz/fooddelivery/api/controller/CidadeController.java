@@ -2,6 +2,8 @@ package com.danielqueiroz.fooddelivery.api.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -47,7 +49,7 @@ public class CidadeController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cidade salvar(@RequestBody Cidade cidade) {
+	public Cidade salvar(@RequestBody @Valid Cidade cidade) {
 		try {
 			return cidadeService.salvar(cidade);
 		} catch (EstadoNaoEncontradoException e) {
@@ -56,7 +58,7 @@ public class CidadeController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Cidade> atualizar(@RequestBody Cidade cidade, @PathVariable Long id) {
+	public ResponseEntity<Cidade> atualizar(@RequestBody @Valid Cidade cidade, @PathVariable Long id) {
 
 		Cidade cidadeRetornada = cidadeService.buscarPorId(id);
 

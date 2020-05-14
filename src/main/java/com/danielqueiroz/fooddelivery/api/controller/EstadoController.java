@@ -2,6 +2,8 @@ package com.danielqueiroz.fooddelivery.api.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -45,12 +47,12 @@ public class EstadoController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Estado salvar(@RequestBody Estado estado) {
+	public Estado salvar(@RequestBody @Valid Estado estado) {
 		return estadoService.salvar(estado);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Estado> atualizar(@RequestBody Estado estado, @PathVariable Long id) {
+	public ResponseEntity<Estado> atualizar(@RequestBody @Valid Estado estado, @PathVariable Long id) {
 
 		try {
 			Estado estadoRetornado = estadoService.buscarPorId(id);
