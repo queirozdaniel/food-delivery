@@ -1,60 +1,50 @@
 package com.danielqueiroz.fooddelivery;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import javax.validation.ConstraintViolationException;
-
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.danielqueiroz.fooddelivery.domain.exception.EntidadeEmUsoException;
-import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
-import com.danielqueiroz.fooddelivery.domain.model.Cozinha;
-import com.danielqueiroz.fooddelivery.domain.service.CozinhaService;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CozinhaIntegrationTestsIT {
 
-	@Autowired
-	private CozinhaService cozinhaService;
+	@LocalServerPort
+	private int port;
+	
+	@Test
+	public void deveRetornarHttpStatus200_QuandoConsultarCozinhas() {
+		RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+		
+		RestAssured.given()
+			.basePath("/cozinhas")
+			.port(port)
+			.accept(ContentType.JSON)
+		.when()
+			.get()
+		.then().statusCode(200);
+	}
 
 	@Test
-	public void deveTerSucessoAoCadastroCozinhaComCamposValidos() {
-		Cozinha novaCozinha = new Cozinha();
-		novaCozinha.setNome("Chinesa");
+	public void deveConter4Cozinhas_QuandoConsultarCozinhas() {
+		RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 		
-		novaCozinha = cozinhaService.salvar(novaCozinha);
-		
-		assertThat(novaCozinha).isNotNull();
-		assertThat(novaCozinha.getId()).isNotNull();
-	}
-
-	@Test(expected = ConstraintViolationException.class)
-	public void deveFalharAoCadastrarCozinhaQuandoEstiverSemNome() {
-		Cozinha novaCozinha = new Cozinha();
-		novaCozinha.setNome("");
-		
-		novaCozinha = cozinhaService.salvar(novaCozinha);
-	}
-	
-	@Test(expected = EntidadeEmUsoException.class)
-	public void deveFalharAoTentarExcluirCozinhaEmUso() {
-		Cozinha novaCozinha = new Cozinha();
-		novaCozinha.setId(1L);
-		
-		cozinhaService.deletar(novaCozinha.getId());
-	}
-	
-	@Test(expected = EntidadeNaoEncontradaException.class)	
-	public void deveFalharAoTentarExcluirCozinhaInexistente() {
-		Cozinha novaCozinha = new Cozinha();
-		novaCozinha.setId(30L);
-		
-		cozinhaService.deletar(novaCozinha.getId());
+		RestAssured.given()
+			.basePath("/cozinhas")
+			.port(port)
+			.accept(ContentType.JSON)
+		.when()
+			.get()
+		.then()
+			.body("", Matchers.hasSize(4))
+			.body("nome", Matchers.hasItem("Brasileira"));
+			
 	}
 	
 	
