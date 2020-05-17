@@ -26,33 +26,28 @@ import com.danielqueiroz.fooddelivery.domain.model.Cozinha;
 import com.danielqueiroz.fooddelivery.domain.service.CozinhaService;
 
 @RestController
-@RequestMapping(value = "/cozinhas", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+@RequestMapping(value = "/cozinhas", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 public class CozinhaController {
 
 	@Autowired
 	private CozinhaService cozinhaService;
-	
+
 	@GetMapping
-	public List<Cozinha> listarTodas(){
+	public List<Cozinha> listarTodas() {
 		return cozinhaService.buscarTodos();
 	}
-	
-	@GetMapping("/{id}")
-	public ResponseEntity<Cozinha> buscarPorId(@PathVariable("id") Long id) {
-		try {
-			return ResponseEntity.ok(cozinhaService.buscarPorId(id));
 
-		} catch (EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.notFound().build();
-		}
+	@GetMapping("/{id}")
+	public Cozinha buscarPorId(@PathVariable("id") Long id) {
+		return cozinhaService.buscarPorId(id);
 	}
-	
+
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cozinha adicionar(@RequestBody @Valid Cozinha cozinha) {
 		return cozinhaService.salvar(cozinha);
 	}
-	
+
 	@PutMapping("/{id}")
 	public ResponseEntity<Cozinha> atualizar(@RequestBody Cozinha cozinha, @PathVariable Long id) {
 		try {
@@ -66,24 +61,24 @@ public class CozinhaController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-	
-	@DeleteMapping(value ="/{id}")
+
+	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Cozinha> deletar(@PathVariable Long id) {
-		
+
 		try {
 			cozinhaService.deletar(id);
 			return ResponseEntity.noContent().build();
-	
+
 		} catch (DataIntegrityViolationException ex) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
-		
+
 		} catch (EntidadeNaoEncontradaException ex) {
 			return ResponseEntity.notFound().build();
 		}
 	}
-	
+
 	@GetMapping("/nome")
-	public ResponseEntity<?> pesquisaEmNome(String nome){
+	public ResponseEntity<?> pesquisaEmNome(String nome) {
 		try {
 			return ResponseEntity.ok(cozinhaService.buscarPorNome(nome));
 
@@ -91,10 +86,10 @@ public class CozinhaController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-	
+
 	@GetMapping("/todas")
-	public List<Cozinha> listarTodasQueContemEmNome(@RequestParam String nome){
+	public List<Cozinha> listarTodasQueContemEmNome(@RequestParam String nome) {
 		return cozinhaService.buscarTodasContemNoNome(nome);
 	}
-	
+
 }

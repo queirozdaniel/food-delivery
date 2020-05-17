@@ -41,12 +41,11 @@ public class CozinhaService {
 	}
 
 	public Cozinha buscarPorId(Long id) {
-		try {
-			return repository.findById(id).get();
-
-		} catch (EmptyResultDataAccessException ex) {
+		if (repository.findById(id).isEmpty()) {
 			throw new EntidadeNaoEncontradaException(String.format(MSG_COZINHA_NAO_ENCONTRADA, id));
 		}
+
+		return repository.findById(id).get();
 	}
 
 	public List<Cozinha> buscarTodasContemNoNome(String nome) {
