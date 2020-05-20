@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeEmUsoException;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
@@ -25,6 +26,7 @@ public class RestauranteService {
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 
+	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
 		Long id = restaurante.getCozinha().getId();
 		if (cozinhaRepository.findById(id).isEmpty()) {
@@ -37,6 +39,7 @@ public class RestauranteService {
 		return restauranteRepository.findAll();
 	}
 
+	@Transactional
 	public void deletar(Long id) {
 		try {
 			restauranteRepository.deleteById(id);

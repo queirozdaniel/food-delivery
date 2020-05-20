@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeEmUsoException;
 import com.danielqueiroz.fooddelivery.domain.exception.EstadoNaoEncontradoException;
@@ -20,10 +21,12 @@ public class EstadoService {
 	@Autowired
 	private EstadoRepository estadoRepository;
 
+	@Transactional
 	public Estado salvar(Estado estado) {
 		return estadoRepository.save(estado);
 	}
 
+	@Transactional
 	public void deletar(Long id) {
 
 		try {
