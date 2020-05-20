@@ -9,7 +9,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.danielqueiroz.fooddelivery.core.validation.ValidacaoException;
-import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 import com.danielqueiroz.fooddelivery.domain.service.RestauranteService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -41,7 +39,7 @@ public class RestauranteController {
 
 	@Autowired
 	private RestauranteService restauranteService;
-	
+
 	@Autowired
 	private SmartValidator smartValidator;
 
@@ -52,12 +50,7 @@ public class RestauranteController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Restaurante> buscarPorId(@PathVariable Long id) {
-		try {
-			return ResponseEntity.ok(restauranteService.buscarPorId(id));
-
-		} catch (EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.notFound().build();
-		}
+		return ResponseEntity.ok(restauranteService.buscarPorId(id));
 	}
 
 	@PostMapping
@@ -69,33 +62,21 @@ public class RestauranteController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Restaurante> atualizar(@RequestBody @Valid Restaurante restaurante, @PathVariable Long id) {
 
-		try {
-			Restaurante restauranteRetornado = restauranteService.buscarPorId(id);
+		Restaurante restauranteRetornado = restauranteService.buscarPorId(id);
 
-			BeanUtils.copyProperties(restaurante, restauranteRetornado, "id", "formasPagamento", "endereco",
-					"dataCadastro");
-			restauranteService.salvar(restauranteRetornado);
+		BeanUtils.copyProperties(restaurante, restauranteRetornado, "id", "formasPagamento", "endereco",
+				"dataCadastro");
+		restauranteService.salvar(restauranteRetornado);
 
-			return ResponseEntity.ok(restauranteRetornado);
-		} catch (EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.notFound().build();
-		}
+		return ResponseEntity.ok(restauranteRetornado);
 
 	}
 
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Restaurante> deletar(@PathVariable Long id) {
 
-		try {
-			restauranteService.deletar(id);
-			return ResponseEntity.noContent().build();
-
-		} catch (DataIntegrityViolationException ex) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).build();
-
-		} catch (EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.notFound().build();
-		}
+		restauranteService.deletar(id);
+		return ResponseEntity.noContent().build();
 	}
 
 	@PatchMapping("/{id}")
@@ -115,12 +96,12 @@ public class RestauranteController {
 
 	private void validate(Restaurante restaurante, String objectName) {
 		BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(restaurante, objectName);
-		
+
 		smartValidator.validate(restaurante, bindingResult);
 		if (bindingResult.hasErrors()) {
 			throw new ValidacaoException(bindingResult);
 		}
-		
+
 	}
 
 	private void modificaCampos(Map<String, Object> campos, Restaurante restauranteAtual, HttpServletRequest request) {

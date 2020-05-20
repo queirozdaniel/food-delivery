@@ -46,7 +46,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		ProblemType problemType = ProblemType.ENTIDADE_NAO_ENCONTRADA;
 		ProblemMessage problema = createProblemMessageBuilder(status, problemType, ex.getMessage())
 				.userMessage(ex.getMessage()).build();
-		System.out.println(">>> Passou aqui");
+		
 		return handleExceptionInternal(ex, problema, new HttpHeaders(), status, request);
 	}
 

@@ -6,7 +6,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.model.Cozinha;
 import com.danielqueiroz.fooddelivery.domain.service.CozinhaService;
 
@@ -50,41 +48,23 @@ public class CozinhaController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Cozinha> atualizar(@RequestBody Cozinha cozinha, @PathVariable Long id) {
-		try {
-			Cozinha cozinhaRetornada = cozinhaService.buscarPorId(id);
+		Cozinha cozinhaRetornada = cozinhaService.buscarPorId(id);
 
-			BeanUtils.copyProperties(cozinha, cozinhaRetornada, "id");
-			cozinhaService.salvar(cozinhaRetornada);
+		BeanUtils.copyProperties(cozinha, cozinhaRetornada, "id");
+		cozinhaService.salvar(cozinhaRetornada);
 
-			return ResponseEntity.ok(cozinhaRetornada);
-		} catch (EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.notFound().build();
-		}
+		return ResponseEntity.ok(cozinhaRetornada);
 	}
 
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Cozinha> deletar(@PathVariable Long id) {
-
-		try {
-			cozinhaService.deletar(id);
-			return ResponseEntity.noContent().build();
-
-		} catch (DataIntegrityViolationException ex) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).build();
-
-		} catch (EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.notFound().build();
-		}
+		cozinhaService.deletar(id);
+		return ResponseEntity.noContent().build();
 	}
 
 	@GetMapping("/nome")
 	public ResponseEntity<?> pesquisaEmNome(String nome) {
-		try {
-			return ResponseEntity.ok(cozinhaService.buscarPorNome(nome));
-
-		} catch (EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.notFound().build();
-		}
+		return ResponseEntity.ok(cozinhaService.buscarPorNome(nome));
 	}
 
 	@GetMapping("/todas")

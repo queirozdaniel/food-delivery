@@ -38,7 +38,6 @@ public class EstadoService {
 
 	public Estado buscarPorId(Long id) {
 			return estadoRepository.findById(id).orElseThrow(() -> new EstadoNaoEncontradoException(id));
-
 	}
 
 	public List<Estado> buscarTodos() {
