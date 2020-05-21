@@ -27,6 +27,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.danielqueiroz.fooddelivery.api.model.RestauranteDTO;
+import com.danielqueiroz.fooddelivery.api.model.assembler.RestauranteDTOAssembler;
+import com.danielqueiroz.fooddelivery.api.model.assembler.RestauranteInputDisassembler;
+import com.danielqueiroz.fooddelivery.api.model.input.RestauranteInput;
 import com.danielqueiroz.fooddelivery.core.validation.ValidacaoException;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 import com.danielqueiroz.fooddelivery.domain.service.RestauranteService;
@@ -43,32 +47,43 @@ public class RestauranteController {
 	@Autowired
 	private SmartValidator smartValidator;
 
+	@Autowired
+	private RestauranteDTOAssembler restauranteDTOAssembler;
+
+	@Autowired
+	private RestauranteInputDisassembler restauranteInputDisassembler;
+
 	@GetMapping
-	public List<Restaurante> buscarTodos() {
-		return restauranteService.buscarTodos();
+	public List<RestauranteDTO> buscarTodos() {
+		return restauranteDTOAssembler.toCollectionModel(restauranteService.buscarTodos());
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Restaurante> buscarPorId(@PathVariable Long id) {
-		return ResponseEntity.ok(restauranteService.buscarPorId(id));
+	public RestauranteDTO buscarPorId(@PathVariable Long id) {
+		Restaurante restaurante = restauranteService.buscarPorId(id);
+
+		return restauranteDTOAssembler.toModel(restaurante);
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Restaurante salvar(@RequestBody @Valid Restaurante restaurante) {
-		return restauranteService.salvar(restaurante);
+	public RestauranteDTO salvar(@RequestBody @Valid RestauranteInput restauranteInput) {
+		Restaurante restauranteCriado = restauranteInputDisassembler.toDomainObject(restauranteInput);
+
+		return restauranteDTOAssembler.toModel(restauranteService.salvar(restauranteCriado));
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Restaurante> atualizar(@RequestBody @Valid Restaurante restaurante, @PathVariable Long id) {
+	public RestauranteDTO atualizar(@RequestBody @Valid RestauranteInput restauranteInput, @PathVariable Long id) {
 
+		Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
+		
 		Restaurante restauranteRetornado = restauranteService.buscarPorId(id);
 
 		BeanUtils.copyProperties(restaurante, restauranteRetornado, "id", "formasPagamento", "endereco",
 				"dataCadastro");
-		restauranteService.salvar(restauranteRetornado);
 
-		return ResponseEntity.ok(restauranteRetornado);
+		return restauranteDTOAssembler.toModel(restauranteService.salvar(restauranteRetornado));
 
 	}
 
