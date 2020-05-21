@@ -1,6 +1,6 @@
 package com.danielqueiroz.fooddelivery.api.exceptionhandler;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -215,7 +215,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	private ProblemMessage.ProblemMessageBuilder createProblemMessageBuilder(HttpStatus status, ProblemType problemType,
 			String detail) {
 		return ProblemMessage.builder().status(status.value()).type(problemType.getPath()).title(problemType.getTitle())
-				.detail(detail).timestamp(LocalDateTime.now());
+				.detail(detail).timestamp(OffsetDateTime.now());
 	}
 
 }
