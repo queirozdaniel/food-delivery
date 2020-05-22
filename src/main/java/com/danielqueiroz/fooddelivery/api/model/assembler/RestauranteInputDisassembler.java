@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.danielqueiroz.fooddelivery.api.model.input.RestauranteInput;
+import com.danielqueiroz.fooddelivery.domain.model.Cozinha;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 
 @Component
@@ -15,6 +16,12 @@ public class RestauranteInputDisassembler {
 	
 	public Restaurante toDomainObject(RestauranteInput restauranteInput) {
 		return modelMapper.map(restauranteInput, Restaurante.class);
+	}
+	
+	public void copyToDomainObject(RestauranteInput restauranteInput, Restaurante restaurante) {
+		restaurante.setCozinha(new Cozinha());
+		
+		modelMapper.map(restauranteInput, restaurante);
 	}
 	
 }
