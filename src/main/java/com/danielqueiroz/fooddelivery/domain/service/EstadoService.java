@@ -31,6 +31,7 @@ public class EstadoService {
 
 		try {
 			estadoRepository.deleteById(id);
+			estadoRepository.flush();
 		} catch (EmptyResultDataAccessException ex) {
 			throw new EstadoNaoEncontradoException(id);
 		} catch (DataIntegrityViolationException e) {

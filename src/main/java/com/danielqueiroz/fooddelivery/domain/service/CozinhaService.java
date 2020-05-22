@@ -31,6 +31,7 @@ public class CozinhaService {
 	public void deletar(Long id) {
 		try {
 			repository.deleteById(id);
+			repository.flush();
 		} catch (EmptyResultDataAccessException ex) {
 			throw new EntidadeNaoEncontradaException(String.format(MSG_COZINHA_NAO_ENCONTRADA, id));
 		} catch (DataIntegrityViolationException ex) {
