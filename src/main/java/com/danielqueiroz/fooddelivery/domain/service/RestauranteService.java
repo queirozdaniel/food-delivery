@@ -52,6 +52,20 @@ public class RestauranteService {
 		}
 	}
 
+	@Transactional
+	public void ativar(Long id) {
+		Restaurante restaurante = restauranteRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_ENCONTRADA, id)));
+		
+		restaurante.setAtivo(true);
+	}
+	
+	@Transactional
+	public void inativar(Long id) {
+		Restaurante restaurante = restauranteRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_ENCONTRADA, id)));
+		
+		restaurante.setAtivo(false);
+	}
+	
 	public Restaurante buscarPorId(Long id) {
 		return restauranteRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_ENCONTRADA, id)));
 	}
