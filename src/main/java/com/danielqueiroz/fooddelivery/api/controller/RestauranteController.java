@@ -62,11 +62,11 @@ public class RestauranteController {
 
 		Restaurante restauranteRetornado = restauranteService.buscarPorId(id);
 
+		System.out.println("---- PUT");
 		restauranteInputDisassembler.copyToDomainObject(restauranteInput, restauranteRetornado);
-		
-//		BeanUtils.copyProperties(restaurante, restauranteRetornado, "id", "formasPagamento", "endereco",
-//				"dataCadastro");
+		System.out.println("PUT ----");
 
+		
 		return restauranteDTOAssembler.toModel(restauranteService.salvar(restauranteRetornado));
 
 	}
