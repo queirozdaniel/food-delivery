@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeEmUsoException;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
+import com.danielqueiroz.fooddelivery.domain.repository.CidadeRepository;
 import com.danielqueiroz.fooddelivery.domain.repository.CozinhaRepository;
 import com.danielqueiroz.fooddelivery.domain.repository.RestauranteRepository;
 
@@ -25,13 +26,23 @@ public class RestauranteService {
 
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
+	
+	@Autowired
+	private CidadeRepository cidadeRepository;
 
 	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
-		Long id = restaurante.getCozinha().getId();
-		if (cozinhaRepository.findById(id).isEmpty()) {
-			throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de cozinha com id %d", id));
+		Long idCozinha = restaurante.getCozinha().getId();
+		Long idCidade = restaurante.getEndereco().getCidade().getId();
+		
+		if (cozinhaRepository.findById(idCozinha).isEmpty()) {
+			throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de cozinha com id %d", idCidade));
 		}
+		
+		if (cidadeRepository.findById(idCidade).isEmpty()) {
+			throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de cidade com id %d", idCidade));
+		}
+		
 		return restauranteRepository.save(restaurante);
 	}
 
