@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeEmUsoException;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
+import com.danielqueiroz.fooddelivery.domain.model.FormaPagamento;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 import com.danielqueiroz.fooddelivery.domain.repository.CidadeRepository;
 import com.danielqueiroz.fooddelivery.domain.repository.CozinhaRepository;
@@ -30,6 +31,9 @@ public class RestauranteService {
 	@Autowired
 	private CidadeRepository cidadeRepository;
 
+	@Autowired
+	private FormaPagamentoService formaPagamentoService;
+	
 	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
 		Long idCozinha = restaurante.getCozinha().getId();
@@ -75,6 +79,22 @@ public class RestauranteService {
 		Restaurante restaurante = restauranteRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_ENCONTRADA, id)));
 		
 		restaurante.setAtivo(false);
+	}
+	
+	@Transactional
+	public void desassociarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+		Restaurante restaurante = buscarPorId(restauranteId);
+		FormaPagamento formaPagamento = formaPagamentoService.buscarPorId(formaPagamentoId);
+		
+		restaurante.getFormasPagamento().remove(formaPagamento);
+	}
+	
+	@Transactional
+	public void associarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+		Restaurante restaurante = buscarPorId(restauranteId);
+		FormaPagamento formaPagamento = formaPagamentoService.buscarPorId(formaPagamentoId);
+		
+		restaurante.getFormasPagamento().add(formaPagamento);
 	}
 	
 	public Restaurante buscarPorId(Long id) {
