@@ -34,7 +34,6 @@ public class RestauranteFormaPagamentoController {
 		return formaPagamentoDtoAssembler.toCollectionModel(restaurantes.getFormasPagamento());
 	}
 	
-	
 	@DeleteMapping("/{formaPagamentoId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void desassociar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId) {
