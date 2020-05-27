@@ -97,6 +97,20 @@ public class RestauranteService {
 		restaurante.getFormasPagamento().add(formaPagamento);
 	}
 	
+	@Transactional
+	public void abrir(Long restauranteId) {
+	    Restaurante restauranteAtual = buscarPorId(restauranteId);
+	    
+	    restauranteAtual.abrir();
+	}
+
+	@Transactional
+	public void fechar(Long restauranteId) {
+	    Restaurante restauranteAtual = buscarPorId(restauranteId);
+	    
+	    restauranteAtual.fechar();
+	}   
+	
 	public Restaurante buscarPorId(Long id) {
 		return restauranteRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_ENCONTRADA, id)));
 	}

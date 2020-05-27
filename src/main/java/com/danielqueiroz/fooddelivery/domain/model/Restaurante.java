@@ -69,5 +69,15 @@ public class Restaurante {
 
 	@OneToMany(mappedBy = "restaurante")
 	private List<Produto> produtos = new ArrayList<>();
+	
+	private Boolean aberto = Boolean.FALSE;
 
+	public void abrir() {
+	    setAberto(true);
+	}
+
+	public void fechar() {
+	    setAberto(false);
+	}    
+	
 }
