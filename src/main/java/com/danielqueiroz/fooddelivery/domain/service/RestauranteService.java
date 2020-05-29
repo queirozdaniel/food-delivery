@@ -79,10 +79,20 @@ public class RestauranteService {
 	}
 	
 	@Transactional
+	public void ativar(List<Long> restaurantesId) {
+		restaurantesId.forEach(this::ativar);
+	}
+	
+	@Transactional
 	public void inativar(Long id) {
 		Restaurante restaurante = restauranteRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_ENCONTRADA, id)));
 		
 		restaurante.setAtivo(false);
+	}
+	
+	@Transactional
+	public void inativar(List<Long> restaurantesId) {
+		restaurantesId.forEach(this::inativar);
 	}
 	
 	@Transactional

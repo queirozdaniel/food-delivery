@@ -21,6 +21,8 @@ import com.danielqueiroz.fooddelivery.api.model.RestauranteDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.RestauranteDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.RestauranteInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.RestauranteInput;
+import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
+import com.danielqueiroz.fooddelivery.domain.exception.NegocioException;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 import com.danielqueiroz.fooddelivery.domain.service.RestauranteService;
 
@@ -89,6 +91,29 @@ public class RestauranteController {
 	public void inativar(@PathVariable Long id) {
 		restauranteService.inativar(id);
 	}
+	
+	@PutMapping("/ativacoes")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void ativarMutiplos(@RequestBody List<Long> ids) {
+		try {
+			restauranteService.ativar(ids);
+		} catch (EntidadeNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage(), e);
+		}
+	}
+	
+	@DeleteMapping("/ativacoes")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void inativarMutiplos(@RequestBody List<Long> ids) {
+		try {
+			restauranteService.inativar(ids);
+		} catch (EntidadeNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage(), e);
+		}
+	}
+	
+	
+	
 	
 	@PutMapping("/{restauranteId}/abertura")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
