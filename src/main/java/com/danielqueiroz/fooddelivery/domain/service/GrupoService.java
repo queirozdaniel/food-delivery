@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeEmUsoException;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.model.Grupo;
+import com.danielqueiroz.fooddelivery.domain.model.Permissao;
 import com.danielqueiroz.fooddelivery.domain.repository.GrupoRepository;
 
 @Service
@@ -18,6 +19,9 @@ public class GrupoService {
 
 	@Autowired
 	private GrupoRepository grupoRepository;
+	
+	@Autowired
+	private PermissaoService permissaoService;
 	
 	private static final String MSG_GRUPO_NAO_ENCONTRADA = "Grupo com código %d não encontrado";
 	
@@ -47,5 +51,20 @@ public class GrupoService {
 		}
 	}
 	
+	@Transactional
+	public void desassociarPermissao(Long grupoId, Long permissaoId) {
+	    Grupo grupo = buscarPorId(grupoId);
+	    Permissao permissao = permissaoService.buscarPorId(permissaoId);
+	    
+	    grupo.removerPermissao(permissao);
+	}
+
+	@Transactional
+	public void associarPermissao(Long grupoId, Long permissaoId) {
+	    Grupo grupo = buscarPorId(grupoId);
+	    Permissao permissao = permissaoService.buscarPorId(permissaoId);
+	    
+	    grupo.adicionarPermissao(permissao);
+	} 
 
 }

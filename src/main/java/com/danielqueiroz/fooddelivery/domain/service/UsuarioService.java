@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.exception.NegocioException;
+import com.danielqueiroz.fooddelivery.domain.model.Grupo;
 import com.danielqueiroz.fooddelivery.domain.model.Usuario;
 import com.danielqueiroz.fooddelivery.domain.repository.UsuarioRepository;
 
@@ -16,6 +17,9 @@ public class UsuarioService {
 
 	@Autowired
     private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private GrupoService grupoService;
 
     @Transactional
     public Usuario salvar(Usuario usuario) {
@@ -39,6 +43,22 @@ public class UsuarioService {
         }
         
         usuario.setSenha(novaSenha);
+    }
+    
+    @Transactional
+    public void desassociarGrupo(Long usuarioId, Long grupoId) {
+        Usuario usuario = buscarPorId(usuarioId);
+        Grupo grupo = grupoService.buscarPorId(grupoId);
+        
+        usuario.removerGrupo(grupo);
+    }
+
+    @Transactional
+    public void associarGrupo(Long usuarioId, Long grupoId) {
+        Usuario usuario = buscarPorId(usuarioId);
+        Grupo grupo = grupoService.buscarPorId(grupoId);
+        
+        usuario.adicionarGrupo(grupo);
     }
 	
     public Usuario buscarPorId(Long id) {
