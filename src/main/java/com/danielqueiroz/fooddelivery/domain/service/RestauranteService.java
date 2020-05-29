@@ -12,6 +12,7 @@ import com.danielqueiroz.fooddelivery.domain.exception.EntidadeEmUsoException;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.model.FormaPagamento;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
+import com.danielqueiroz.fooddelivery.domain.model.Usuario;
 import com.danielqueiroz.fooddelivery.domain.repository.CidadeRepository;
 import com.danielqueiroz.fooddelivery.domain.repository.CozinhaRepository;
 import com.danielqueiroz.fooddelivery.domain.repository.RestauranteRepository;
@@ -30,6 +31,9 @@ public class RestauranteService {
 	
 	@Autowired
 	private CidadeRepository cidadeRepository;
+	
+	@Autowired
+	private UsuarioService usuarioService;
 
 	@Autowired
 	private FormaPagamentoService formaPagamentoService;
@@ -110,6 +114,22 @@ public class RestauranteService {
 	    
 	    restauranteAtual.fechar();
 	}   
+	
+	@Transactional
+	public void desassociarResponsavel(Long restauranteId, Long usuarioId) {
+	    Restaurante restaurante = buscarPorId(restauranteId);
+	    Usuario usuario = usuarioService.buscarPorId(usuarioId);
+	    
+	    restaurante.removerResponsavel(usuario);
+	}
+
+	@Transactional
+	public void associarResponsavel(Long restauranteId, Long usuarioId) {
+	    Restaurante restaurante = buscarPorId(restauranteId);
+	    Usuario usuario = usuarioService.buscarPorId(usuarioId);
+	    
+	    restaurante.adicionarResponsavel(usuario);
+	}
 	
 	public Restaurante buscarPorId(Long id) {
 		return restauranteRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_ENCONTRADA, id)));
