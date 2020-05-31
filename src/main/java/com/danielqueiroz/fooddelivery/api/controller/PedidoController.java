@@ -25,7 +25,9 @@ import com.danielqueiroz.fooddelivery.domain.exception.NegocioException;
 import com.danielqueiroz.fooddelivery.domain.model.Pedido;
 import com.danielqueiroz.fooddelivery.domain.model.Usuario;
 import com.danielqueiroz.fooddelivery.domain.repository.PedidoRepository;
+import com.danielqueiroz.fooddelivery.domain.repository.filter.PedidoFilter;
 import com.danielqueiroz.fooddelivery.domain.service.PedidoService;
+import com.danielqueiroz.fooddelivery.infrastructure.repository.spec.PedidoSpecFactory;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -47,8 +49,8 @@ public class PedidoController {
 	private PedidoRepository pedidoRepository;
 	
 	@GetMapping
-	public List<PedidoResumoDTO> listar(){
-		List<Pedido> pedidos = pedidoRepository.findAll();
+	public List<PedidoResumoDTO> pesquisar(PedidoFilter filtro){
+		List<Pedido> pedidos = pedidoRepository.findAll(PedidoSpecFactory.usandoFiltro(filtro));
 		return pedidoResumoDtoAssembler.toCollectionModel(pedidos);
 	}
 	
