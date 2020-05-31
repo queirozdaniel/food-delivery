@@ -36,8 +36,8 @@ public class PedidoService {
 	private FormaPagamentoService formaPagamentoService;
 	
 	
-	public Pedido buscarPorId(Long id) {
-		return pedidoRepository.findById(id).orElseThrow( () -> new PedidoNaoEncontradoException(id));
+	public Pedido buscarPorCodigo(String codigo) {
+		return pedidoRepository.findByCodigo(codigo).orElseThrow( () -> new PedidoNaoEncontradoException(codigo));
 	}
 	
 	@Transactional
