@@ -21,10 +21,12 @@ import com.danielqueiroz.fooddelivery.api.model.RestauranteDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.RestauranteDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.RestauranteInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.RestauranteInput;
+import com.danielqueiroz.fooddelivery.api.model.view.RestauranteView;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.exception.NegocioException;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 import com.danielqueiroz.fooddelivery.domain.service.RestauranteService;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @RestController
 @RequestMapping("/restaurantes")
@@ -39,10 +41,35 @@ public class RestauranteController {
 	@Autowired
 	private RestauranteInputDisassembler restauranteInputDisassembler;
 
+	@JsonView(RestauranteView.Resumida.class)
 	@GetMapping
-	public List<RestauranteDTO> buscarTodos() {
+	public List<RestauranteDTO> buscarTodosResumida() {
 		return restauranteDTOAssembler.toCollectionModel(restauranteService.buscarTodos());
 	}
+	
+	@JsonView(RestauranteView.ApenasNome.class)
+	@GetMapping(params = "projecao=apenas-nome")
+	public List<RestauranteDTO> buscarApenasNome() {
+		return restauranteDTOAssembler.toCollectionModel(restauranteService.buscarTodos());
+	}
+	
+//	@GetMapping
+//	public MappingJacksonValue buscarTodos(@RequestParam(required = false) String projecao) {
+//		List<Restaurante> resturantes = restauranteService.buscarTodos();
+//		List<RestauranteDTO> restautantesDTO = restauranteDTOAssembler.toCollectionModel(resturantes);
+//
+//		MappingJacksonValue restauranteMapper = new MappingJacksonValue(restautantesDTO);
+//
+//		restauranteMapper.setSerializationView(RestauranteView.Resumida.class);
+//
+//		if ("apenas-nome".equals(projecao)) {
+//			restauranteMapper.setSerializationView(RestauranteView.ApenasNome.class);
+//		} else if ("resumo".equals(projecao)) {
+//			restauranteMapper.setSerializationView(null);
+//		}
+//
+//		return restauranteMapper;
+//	}
 
 	@GetMapping("/{id}")
 	public RestauranteDTO buscarPorId(@PathVariable Long id) {
@@ -64,11 +91,8 @@ public class RestauranteController {
 
 		Restaurante restauranteRetornado = restauranteService.buscarPorId(id);
 
-		System.out.println("---- PUT");
 		restauranteInputDisassembler.copyToDomainObject(restauranteInput, restauranteRetornado);
-		System.out.println("PUT ----");
 
-		
 		return restauranteDTOAssembler.toModel(restauranteService.salvar(restauranteRetornado));
 
 	}
@@ -85,13 +109,13 @@ public class RestauranteController {
 	public void ativar(@PathVariable Long id) {
 		restauranteService.ativar(id);
 	}
-	
+
 	@DeleteMapping("/{id}/ativo")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void inativar(@PathVariable Long id) {
 		restauranteService.inativar(id);
 	}
-	
+
 	@PutMapping("/ativacoes")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void ativarMutiplos(@RequestBody List<Long> ids) {
@@ -101,7 +125,7 @@ public class RestauranteController {
 			throw new NegocioException(e.getMessage(), e);
 		}
 	}
-	
+
 	@DeleteMapping("/ativacoes")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void inativarMutiplos(@RequestBody List<Long> ids) {
@@ -111,10 +135,7 @@ public class RestauranteController {
 			throw new NegocioException(e.getMessage(), e);
 		}
 	}
-	
-	
-	
-	
+
 	@PutMapping("/{restauranteId}/abertura")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void abrir(@PathVariable Long restauranteId) {
@@ -125,6 +146,6 @@ public class RestauranteController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void fechar(@PathVariable Long restauranteId) {
 		restauranteService.fechar(restauranteId);
-	}        
+	}
 
 }
