@@ -23,11 +23,11 @@ public class PedidoInput {
 	
 	@Valid
 	@NotNull
-	private EnderecoInput endereco;
+	private EnderecoInput enderecoEntrega;
 
 	@Valid
 	@Size(min = 1)
 	@NotNull
-	private List<ItemPedidoInput> items;
+	private List<ItemPedidoInput> itens;
 	
 }

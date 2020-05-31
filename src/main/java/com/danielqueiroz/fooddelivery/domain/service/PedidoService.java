@@ -52,6 +52,10 @@ public class PedidoService {
 	}
 
 	private void validarPedido(Pedido pedido) {
+		System.out.println(pedido.getEnderecoEntrega().getCidade().getId());
+		System.out.println(pedido.getCliente().getId());
+		System.out.println(pedido.getRestaurante().getId());
+		System.out.println(pedido.getFormaPagamento().getId());
 	    Cidade cidade = cidadeService.buscarPorId(pedido.getEnderecoEntrega().getCidade().getId());
 	    Usuario cliente = usuarioService.buscarPorId(pedido.getCliente().getId());
 	    Restaurante restaurante = restauranteService.buscarPorId(pedido.getRestaurante().getId());
@@ -61,7 +65,7 @@ public class PedidoService {
 	    pedido.setCliente(cliente);
 	    pedido.setRestaurante(restaurante);
 	    pedido.setFormaPagamento(formaPagamento);
-	    
+	    System.out.println("Passou");
 	    if (restaurante.naoAceitaFormaPagamento(formaPagamento)) {
 	        throw new NegocioException(String.format("Forma de pagamento '%s' não é aceita por esse restaurante.",
 	                formaPagamento.getDescricao()));

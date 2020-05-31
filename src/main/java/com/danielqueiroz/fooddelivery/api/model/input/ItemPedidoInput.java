@@ -1,6 +1,5 @@
 package com.danielqueiroz.fooddelivery.api.model.input;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
@@ -11,9 +10,8 @@ import lombok.Setter;
 @Setter
 public class ItemPedidoInput {
 
-	@Valid
 	@NotNull
-	private ProdutoIdInput produtoId;
+	private Long produtoId;
 	
 	@NotNull
 	@PositiveOrZero

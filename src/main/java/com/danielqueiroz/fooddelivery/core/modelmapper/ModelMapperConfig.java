@@ -16,12 +16,13 @@ public class ModelMapperConfig {
 	public ModelMapper modelMapper() {
 		var modelMapper = new ModelMapper();
 
+		modelMapper.createTypeMap(ItemPedidoInput.class, ItemPedido.class)
+			.addMappings(mapper -> mapper.skip(ItemPedido::setId));
+		
 		var toEnderecoDTO = modelMapper.createTypeMap(Endereco.class, EnderecoDTO.class);
+		
 		toEnderecoDTO.<String>addMapping(enderecoModel -> enderecoModel.getCidade().getEstado().getNome(),
 				(enderecoDTO, value) -> enderecoDTO.getCidade().setEstado(value));
-
-		modelMapper.createTypeMap(ItemPedidoInput.class, ItemPedido.class)
-				.addMappings(mapper -> mapper.skip(ItemPedido::setId));
 
 		return modelMapper;
 	}
