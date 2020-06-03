@@ -5,6 +5,10 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,10 +45,14 @@ public class CozinhaController {
 	
 
 	@GetMapping
-	public List<CozinhaDTO> listarTodas() {
-		List<Cozinha> cozinhas = cozinhaService.buscarTodos();
+	public Page<CozinhaDTO> listarTodas(@PageableDefault(size = 10) Pageable pageable) {
+		Page<Cozinha> cozinhasPages = cozinhaService.buscarTodos(pageable);
 		
-		return cozinhaDTOAssembler.toCollectionModel(cozinhas);
+		List<CozinhaDTO> cozinhasDTO = cozinhaDTOAssembler.toCollectionModel(cozinhasPages.getContent());
+		
+		Page<CozinhaDTO> cozinhasPagesDTO = new PageImpl<>(cozinhasDTO, pageable, cozinhasPages.getTotalElements());
+		
+		return cozinhasPagesDTO;
 	}
 
 	@GetMapping("/{id}")
