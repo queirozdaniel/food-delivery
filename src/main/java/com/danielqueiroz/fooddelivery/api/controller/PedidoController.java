@@ -23,6 +23,7 @@ import com.danielqueiroz.fooddelivery.api.model.assembler.PedidoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.PedidoInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.PedidoResumoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.input.PedidoInput;
+import com.danielqueiroz.fooddelivery.core.data.PageableTranslator;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.exception.NegocioException;
 import com.danielqueiroz.fooddelivery.domain.model.Pedido;
@@ -31,6 +32,7 @@ import com.danielqueiroz.fooddelivery.domain.repository.PedidoRepository;
 import com.danielqueiroz.fooddelivery.domain.repository.filter.PedidoFilter;
 import com.danielqueiroz.fooddelivery.domain.service.PedidoService;
 import com.danielqueiroz.fooddelivery.infrastructure.repository.spec.PedidoSpecFactory;
+import com.google.common.collect.ImmutableMap;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -53,6 +55,9 @@ public class PedidoController {
 	
 	@GetMapping
 	public Page<PedidoResumoDTO> pesquisar(PedidoFilter filtro, Pageable pageable){
+		
+		pageable = traduzirPageable(pageable);
+		
 		Page<Pedido> pedidosPages = pedidoRepository.findAll(PedidoSpecFactory.usandoFiltro(filtro), pageable);
 		List<PedidoResumoDTO> pedidosDTO = pedidoResumoDtoAssembler.toCollectionModel(pedidosPages.getContent());
 		Page<PedidoResumoDTO> pedidosDTOPages = new PageImpl<>(pedidosDTO, pageable, pedidosPages.getTotalElements());
@@ -83,6 +88,17 @@ public class PedidoController {
 	    } catch (EntidadeNaoEncontradaException e) {
 	        throw new NegocioException(e.getMessage(), e);
 	    }
+	}
+	
+	private Pageable traduzirPageable(Pageable apiPageable) {
+		var mapeamento = ImmutableMap.of(
+					"codigo", "codigo",
+					"nomeCliente", "cliente.nome",
+					"restaurante.nome", "restaurante.nome",
+					"valorTotal", "valorTotal"
+				);
+		
+		return PageableTranslator.translate(apiPageable, mapeamento);
 	}
 	
 }
