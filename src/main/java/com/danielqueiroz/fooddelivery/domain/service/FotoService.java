@@ -2,7 +2,6 @@ package com.danielqueiroz.fooddelivery.domain.service;
 
 import java.io.InputStream;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -31,14 +30,16 @@ public class FotoService {
 		String nomeNovoArquivo = fotoStorageService.gerarNomeArquivo(foto.getNomeArquivo());
 		
 		if (fotoExistente.isPresent()) {
+			fotoStorageService.remover(fotoExistente.get().getNomeArquivo());
 			produtoRepository.delete(fotoExistente.get());
 		}
 		
+		foto.setNomeArquivo(nomeNovoArquivo);
 		foto = produtoRepository.save(foto);
 		produtoRepository.flush();
 		
 		NovaFoto novaFoto = NovaFoto.builder()
-			.nomeArquivo(nomeNovoArquivo)
+			.nomeArquivo(foto.getNomeArquivo())
 			.inputStream(dadosArquivo)
 			.build();
 		
