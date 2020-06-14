@@ -1,5 +1,6 @@
 package com.danielqueiroz.fooddelivery.api.controller;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
 
@@ -35,7 +36,7 @@ public class RestauranteProdutoFotoController {
 	private FotoDTOAssembler fotoDTOAssembler;
 	
 	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public FotoProdutoDTO atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId,@Valid FotoProdutoInput fotoProduto) {
+	public FotoProdutoDTO atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId,@Valid FotoProdutoInput fotoProduto) throws IOException {
 
 		MultipartFile arquivo = fotoProduto.getArquivo();
 		Produto produto = produtoService.buscarPorId(restauranteId, produtoId);
@@ -47,7 +48,7 @@ public class RestauranteProdutoFotoController {
 		foto.setTamanho(arquivo.getSize());
 		foto.setNomeArquivo(arquivo.getOriginalFilename());
 		
-		FotoProduto fotoSalva = fotoService.salvar(foto);
+		FotoProduto fotoSalva = fotoService.salvar(foto, arquivo.getInputStream());
 		
 		return fotoDTOAssembler.toModel(fotoSalva);
 	}
