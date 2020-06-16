@@ -8,14 +8,17 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -82,13 +85,20 @@ public class RestauranteProdutoFotoController {
 			verificarCompatibilidadeMediaType(mediaTypeFoto, mediaTypesAceitas);
 			
 			InputStream inputStream = fotoStorageService.recuperar(fotoProduto.getNomeArquivo());
-			return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(new InputStreamResource(inputStream));
+			return ResponseEntity.ok().contentType(mediaTypeFoto).body(new InputStreamResource(inputStream));
 		
 		} catch(EntidadeNaoEncontradaException e) {
 
 			return ResponseEntity.notFound().build();
 		}
 	}
+	
+	@DeleteMapping
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void excluir(@PathVariable Long restauranteId, 
+	        @PathVariable Long produtoId) {
+		fotoService.excluir(restauranteId, produtoId);
+	}  
 
 	private void verificarCompatibilidadeMediaType(MediaType mediaTypeFoto, List<MediaType> mediaTypesAceitas) throws HttpMediaTypeNotAcceptableException {
 		boolean compativel = mediaTypesAceitas.stream()
