@@ -2,6 +2,7 @@ package com.danielqueiroz.fooddelivery.api.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -9,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,23 +67,37 @@ public class RestauranteProdutoFotoController {
 	public FotoProdutoDTO buscar(@PathVariable Long restauranteId, 
 	        @PathVariable Long produtoId) {
 	    FotoProduto fotoProduto = fotoService.buscarPorId(restauranteId, produtoId);
-	    System.out.println("-- JSON");
 	    return fotoDTOAssembler.toModel(fotoProduto);
 	}
 	
 	@GetMapping(produces = MediaType.IMAGE_JPEG_VALUE)
 	public ResponseEntity<InputStreamResource> buscarFoto(@PathVariable Long restauranteId, 
-	        @PathVariable Long produtoId) {
+	        @PathVariable Long produtoId, @RequestHeader(name = "accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
+		
 		try {
 			FotoProduto fotoProduto = fotoService.buscarPorId(restauranteId, produtoId);
 			
+			MediaType mediaTypeFoto = MediaType.parseMediaType(fotoProduto.getContentType());
+			List<MediaType> mediaTypesAceitas = MediaType.parseMediaTypes(acceptHeader);
+			verificarCompatibilidadeMediaType(mediaTypeFoto, mediaTypesAceitas);
+			
 			InputStream inputStream = fotoStorageService.recuperar(fotoProduto.getNomeArquivo());
-			System.out.println("-- IMAGEM");
 			return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(new InputStreamResource(inputStream));
-		}catch(EntidadeNaoEncontradaException e) {
+		
+		} catch(EntidadeNaoEncontradaException e) {
 
 			return ResponseEntity.notFound().build();
 		}
+	}
+
+	private void verificarCompatibilidadeMediaType(MediaType mediaTypeFoto, List<MediaType> mediaTypesAceitas) throws HttpMediaTypeNotAcceptableException {
+		boolean compativel = mediaTypesAceitas.stream()
+					.anyMatch(mediaTypesAceita -> mediaTypesAceita.isCompatibleWith(mediaTypeFoto));
+		
+		if (!compativel) {
+			throw new HttpMediaTypeNotAcceptableException(mediaTypesAceitas);
+		}
+		
 	}
 	
 	
