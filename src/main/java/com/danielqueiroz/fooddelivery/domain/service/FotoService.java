@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.danielqueiroz.fooddelivery.domain.exception.FotoProdutoNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.model.FotoProduto;
 import com.danielqueiroz.fooddelivery.domain.repository.ProdutoRepository;
 import com.danielqueiroz.fooddelivery.domain.service.FotoStorageService.NovaFoto;
@@ -47,5 +48,11 @@ public class FotoService {
 		
 		return foto; 
 	}
+	
+	public FotoProduto buscarPorId(Long restauranteId, Long produtoId) {
+	    return produtoRepository.findFotoById(restauranteId, produtoId)
+	            .orElseThrow(() -> new FotoProdutoNaoEncontradaException(restauranteId, produtoId));
+	}      
+	
 	
 }
