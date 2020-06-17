@@ -42,6 +42,8 @@ public class FotoService {
 		NovaFoto novaFoto = NovaFoto.builder()
 			.nomeArquivo(foto.getNomeArquivo())
 			.inputStream(dadosArquivo)
+			.contentType(foto.getContentType())
+			.contentLength(foto.getTamanho())
 			.build();
 		
 		fotoStorageService.armazenar(novaFoto);
