@@ -1,11 +1,14 @@
 package com.danielqueiroz.fooddelivery.api.controller;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,17 +40,24 @@ public class FormaPagamentoController {
     private FormaPagamentoInputDisassembler formaPagamentoInputDisassembler;
     
     @GetMapping
-    public List<FormaPagamentoDTO> listar() {
+    public ResponseEntity<List<FormaPagamentoDTO>> listar() {
         List<FormaPagamento> todasFormasPagamentos = formaPagamentoService.buscarTodos();
         
-        return formaPagamentoDTOAssembler.toCollectionModel(todasFormasPagamentos);
+        List<FormaPagamentoDTO> formasPagamentoDTO = formaPagamentoDTOAssembler.toCollectionModel(todasFormasPagamentos);
+        
+        return ResponseEntity.ok()
+        		.cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+        		.body(formasPagamentoDTO);
     }
     
     @GetMapping("/{id}")
-    public FormaPagamentoDTO buscar(@PathVariable Long id) {
+    public ResponseEntity<FormaPagamentoDTO> buscar(@PathVariable Long id) {
         FormaPagamento formaPagamento = formaPagamentoService.buscarPorId(id);
         
-        return formaPagamentoDTOAssembler.toModel(formaPagamento);
+        FormaPagamentoDTO formaPagamentoDTO = formaPagamentoDTOAssembler.toModel(formaPagamento);
+        return ResponseEntity.ok()
+        		.cacheControl(CacheControl.maxAge(20, TimeUnit.SECONDS))
+        		.body(formaPagamentoDTO);
     }
     
     @PostMapping
