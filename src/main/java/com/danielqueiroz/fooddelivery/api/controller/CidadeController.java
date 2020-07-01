@@ -24,6 +24,11 @@ import com.danielqueiroz.fooddelivery.api.model.input.CidadeInput;
 import com.danielqueiroz.fooddelivery.domain.model.Cidade;
 import com.danielqueiroz.fooddelivery.domain.service.CidadeService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+@Api(tags = "Cidades")
 @RestController
 @RequestMapping("/cidades")
 public class CidadeController {
@@ -38,6 +43,7 @@ public class CidadeController {
 	private CidadeInputDisassembler cidadeInputDisassembler;    
 	
 
+	@ApiOperation("Lista todas as cidades")
 	@GetMapping
 	public List<CidadeDTO> buscarTodos() {
 		List<Cidade> cidades = cidadeService.buscarTodos();
@@ -45,23 +51,30 @@ public class CidadeController {
 		return cidadeDTOAssembler.toCollectionModel(cidades);
 	}
 
+	@ApiOperation("Busca uma cidade por ID")
 	@GetMapping("/{id}")
-	public CidadeDTO buscarPorId(@PathVariable Long id) {
+	public CidadeDTO buscarPorId(@ApiParam(value = "ID de uma cidade", example = "1") @PathVariable Long id) {
 		Cidade cidade = cidadeService.buscarPorId(id);
 	    
 	    return cidadeDTOAssembler.toModel(cidade);
 	}
 
+	@ApiOperation("Cria uma nova cidade")
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public CidadeDTO salvar(@RequestBody @Valid CidadeInput cidadeInput) {
+	public CidadeDTO salvar(@ApiParam(name = "Corpo",value = "Representação de uma cidade")
+								@RequestBody @Valid CidadeInput cidadeInput) {
+		
 		Cidade cidade = cidadeInputDisassembler.toDomainObject(cidadeInput);
         
         return cidadeDTOAssembler.toModel(cidadeService.salvar(cidade));
 	}
 
+	@ApiOperation("Atualiza uma cidade por ID")
 	@PutMapping("/{id}")
-	public CidadeDTO atualizar(@RequestBody @Valid CidadeInput cidadeInput, @PathVariable Long id) {
+	public CidadeDTO atualizar(@ApiParam(name = "corpo",value = "Representação de uma cidade com dados atualizados") 
+										@RequestBody @Valid CidadeInput cidadeInput,
+										@ApiParam(value = "ID de uma cidade", example = "1") @PathVariable Long id) {
 		Cidade cidadeRetornada = cidadeService.buscarPorId(id);
         
         cidadeInputDisassembler.copyToDomainObject(cidadeInput, cidadeRetornada);
@@ -69,8 +82,9 @@ public class CidadeController {
         return cidadeDTOAssembler.toModel(cidadeService.salvar(cidadeRetornada));
 	}
 
+	@ApiOperation("Deleta uma cidade por ID")
 	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Cidade> deletar(@PathVariable Long id) {
+	public ResponseEntity<Cidade> deletar(@ApiParam(value = "ID de uma cidade", example = "1")  @PathVariable Long id) {
 		cidadeService.deletar(id);
 		return ResponseEntity.noContent().build();
 	}
