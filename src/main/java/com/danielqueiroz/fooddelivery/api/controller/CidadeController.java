@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.danielqueiroz.fooddelivery.api.exceptionhandler.ProblemMessage;
 import com.danielqueiroz.fooddelivery.api.model.CidadeDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.CidadeDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.CidadeInputDisassembler;
@@ -27,6 +28,8 @@ import com.danielqueiroz.fooddelivery.domain.service.CidadeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @Api(tags = "Cidades")
 @RestController
@@ -52,6 +55,10 @@ public class CidadeController {
 	}
 
 	@ApiOperation("Busca uma cidade por ID")
+	@ApiResponses({
+		@ApiResponse(code = 400, message = "ID da cidade inválido", response = ProblemMessage.class),
+		@ApiResponse(code =404, message = "Cidade não encontrada",response = ProblemMessage.class)
+	})
 	@GetMapping("/{id}")
 	public CidadeDTO buscarPorId(@ApiParam(value = "ID de uma cidade", example = "1") @PathVariable Long id) {
 		Cidade cidade = cidadeService.buscarPorId(id);
@@ -71,6 +78,9 @@ public class CidadeController {
 	}
 
 	@ApiOperation("Atualiza uma cidade por ID")
+	@ApiResponses({
+		@ApiResponse(code =404, message = " Cidade não encontrada",response = ProblemMessage.class)
+	})
 	@PutMapping("/{id}")
 	public CidadeDTO atualizar(@ApiParam(name = "corpo",value = "Representação de uma cidade com dados atualizados") 
 										@RequestBody @Valid CidadeInput cidadeInput,
@@ -83,6 +93,9 @@ public class CidadeController {
 	}
 
 	@ApiOperation("Deleta uma cidade por ID")
+	@ApiResponses({
+		@ApiResponse(code = 404, message = " Cidade não encontrada",response = ProblemMessage.class)
+	})
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Cidade> deletar(@ApiParam(value = "ID de uma cidade", example = "1")  @PathVariable Long id) {
 		cidadeService.deletar(id);

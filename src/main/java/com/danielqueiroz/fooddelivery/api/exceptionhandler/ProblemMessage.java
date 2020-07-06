@@ -23,7 +23,7 @@ public class ProblemMessage {
 	@ApiModelProperty(example = "2019-12-01T18:09:02.70844Z", position = 5)
 	private OffsetDateTime timestamp;
 	
-	@ApiModelProperty(example = "https://algafood.com.br/dados-invalidos", position = 10)
+	@ApiModelProperty(example = "https://api.fooddelivery.com.br/dados-invalidos", position = 10)
 	private String type;
 	
 	@ApiModelProperty(example = "Dados inválidos", position = 15)
