@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,19 +23,18 @@ import com.danielqueiroz.fooddelivery.api.model.CidadeDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.CidadeDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.CidadeInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.CidadeInput;
+import com.danielqueiroz.fooddelivery.api.openapi.controller.CidadeControllerOpenApi;
 import com.danielqueiroz.fooddelivery.domain.model.Cidade;
 import com.danielqueiroz.fooddelivery.domain.service.CidadeService;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@Api(tags = "Cidades")
+
 @RestController
-@RequestMapping("/cidades")
-public class CidadeController {
+@RequestMapping(value = "/cidades", produces = MediaType.APPLICATION_JSON_VALUE)
+public class CidadeController implements CidadeControllerOpenApi {
 
 	@Autowired
 	private CidadeService cidadeService;
@@ -46,7 +46,7 @@ public class CidadeController {
 	private CidadeInputDisassembler cidadeInputDisassembler;    
 	
 
-	@ApiOperation("Lista todas as cidades")
+	@Override
 	@GetMapping
 	public List<CidadeDTO> buscarTodos() {
 		List<Cidade> cidades = cidadeService.buscarTodos();
@@ -54,11 +54,8 @@ public class CidadeController {
 		return cidadeDTOAssembler.toCollectionModel(cidades);
 	}
 
-	@ApiOperation("Busca uma cidade por ID")
-	@ApiResponses({
-		@ApiResponse(code = 400, message = "ID da cidade inválido", response = ProblemMessage.class),
-		@ApiResponse(code =404, message = "Cidade não encontrada",response = ProblemMessage.class)
-	})
+	@Override
+
 	@GetMapping("/{id}")
 	public CidadeDTO buscarPorId(@ApiParam(value = "ID de uma cidade", example = "1") @PathVariable Long id) {
 		Cidade cidade = cidadeService.buscarPorId(id);
@@ -66,7 +63,7 @@ public class CidadeController {
 	    return cidadeDTOAssembler.toModel(cidade);
 	}
 
-	@ApiOperation("Cria uma nova cidade")
+	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public CidadeDTO salvar(@ApiParam(name = "Corpo",value = "Representação de uma cidade")
@@ -77,7 +74,7 @@ public class CidadeController {
         return cidadeDTOAssembler.toModel(cidadeService.salvar(cidade));
 	}
 
-	@ApiOperation("Atualiza uma cidade por ID")
+	@Override
 	@ApiResponses({
 		@ApiResponse(code =404, message = " Cidade não encontrada",response = ProblemMessage.class)
 	})
@@ -92,10 +89,7 @@ public class CidadeController {
         return cidadeDTOAssembler.toModel(cidadeService.salvar(cidadeRetornada));
 	}
 
-	@ApiOperation("Deleta uma cidade por ID")
-	@ApiResponses({
-		@ApiResponse(code = 404, message = " Cidade não encontrada",response = ProblemMessage.class)
-	})
+	@Override
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Cidade> deletar(@ApiParam(value = "ID de uma cidade", example = "1")  @PathVariable Long id) {
 		cidadeService.deletar(id);

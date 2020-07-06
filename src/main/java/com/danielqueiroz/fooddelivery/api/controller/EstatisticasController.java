@@ -17,7 +17,7 @@ import com.danielqueiroz.fooddelivery.domain.service.VendaQueryService;
 import com.danielqueiroz.fooddelivery.domain.service.VendaReportService;
 
 @RestController
-@RequestMapping("/estatisticas")
+@RequestMapping(value = "/estatisticas",  produces = MediaType.APPLICATION_JSON_VALUE)
 public class EstatisticasController {
 
 	@Autowired

@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,13 +21,13 @@ import com.danielqueiroz.fooddelivery.api.model.GrupoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.GrupoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.GrupoInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.GrupoInput;
+import com.danielqueiroz.fooddelivery.api.openapi.controller.GrupoControllerOpenApi;
 import com.danielqueiroz.fooddelivery.domain.model.Grupo;
 import com.danielqueiroz.fooddelivery.domain.service.GrupoService;
 
 @RestController
-@RequestMapping("/grupos")
-public class GrupoController {
-
+@RequestMapping(value = "/grupos", produces = MediaType.APPLICATION_JSON_VALUE)
+public class GrupoController implements GrupoControllerOpenApi {
    
     @Autowired
     private GrupoService grupoService;
@@ -37,21 +38,24 @@ public class GrupoController {
     @Autowired
     private GrupoInputDisassembler grupoInputDisassembler;
     
-    @GetMapping
+    @Override
+	@GetMapping
     public List<GrupoDTO> listar() {
         List<Grupo> todosGrupos = grupoService.buscarTodos();
         
         return grupoDTOAssembler.toCollectionModel(todosGrupos);
     }
     
-    @GetMapping("/{grupoId}")
+    @Override
+	@GetMapping("/{grupoId}")
     public GrupoDTO buscar(@PathVariable Long id) {
         Grupo grupo = grupoService.buscarPorId(id);
         
         return grupoDTOAssembler.toModel(grupo);
     }
     
-    @PostMapping
+    @Override
+	@PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public GrupoDTO adicionar(@RequestBody @Valid GrupoInput grupoInput) {
         Grupo grupo = grupoInputDisassembler.toDomainObject(grupoInput);
@@ -59,7 +63,8 @@ public class GrupoController {
         return grupoDTOAssembler.toModel(grupoService.salvar(grupo));
     }
     
-    @PutMapping("/{grupoId}")
+    @Override
+	@PutMapping("/{grupoId}")
     public GrupoDTO atualizar(@PathVariable Long id,
             @RequestBody @Valid GrupoInput grupoInput) {
         Grupo grupoAtual = grupoService.buscarPorId(id);
@@ -69,7 +74,8 @@ public class GrupoController {
         return grupoDTOAssembler.toModel(grupoService.salvar(grupoAtual));
     }
     
-    @DeleteMapping("/{grupoId}")
+    @Override
+	@DeleteMapping("/{grupoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long id) {
         grupoService.deletar(id);	

@@ -27,12 +27,13 @@ import com.danielqueiroz.fooddelivery.api.model.CozinhaDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.CozinhaDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.CozinhaInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.CozinhaInput;
+import com.danielqueiroz.fooddelivery.api.openapi.controller.CozinhaControllerOpenApi;
 import com.danielqueiroz.fooddelivery.domain.model.Cozinha;
 import com.danielqueiroz.fooddelivery.domain.service.CozinhaService;
 
 @RestController
-@RequestMapping(value = "/cozinhas", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-public class CozinhaController {
+@RequestMapping(value = "/cozinhas", produces = MediaType.APPLICATION_JSON_VALUE)
+public class CozinhaController implements CozinhaControllerOpenApi {
 
 	@Autowired
 	private CozinhaService cozinhaService;
@@ -44,6 +45,7 @@ public class CozinhaController {
 	private CozinhaInputDisassembler cozinhaInputDisassembler;  
 	
 
+	@Override
 	@GetMapping
 	public Page<CozinhaDTO> listarTodas(@PageableDefault(size = 10) Pageable pageable) {
 		Page<Cozinha> cozinhasPages = cozinhaService.buscarTodos(pageable);
@@ -55,6 +57,7 @@ public class CozinhaController {
 		return cozinhasPagesDTO;
 	}
 
+	@Override
 	@GetMapping("/{id}")
 	public CozinhaDTO buscarPorId(@PathVariable("id") Long id) {
 		Cozinha cozinha = cozinhaService.buscarPorId(id);
@@ -62,6 +65,7 @@ public class CozinhaController {
 		return cozinhaDTOAssembler.toModel(cozinha);
 	}
 
+	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public CozinhaDTO adicionar(@RequestBody @Valid CozinhaInput cozinhaInput) {
@@ -70,6 +74,7 @@ public class CozinhaController {
 		return cozinhaDTOAssembler.toModel(cozinhaService.salvar(cozinha));
 	}
 
+	@Override
 	@PutMapping("/{id}")
 	public CozinhaDTO atualizar(@RequestBody CozinhaInput cozinhaInput, @PathVariable Long id) {
 		Cozinha cozinhaRetornada = cozinhaService.buscarPorId(id);
@@ -79,17 +84,20 @@ public class CozinhaController {
 		return cozinhaDTOAssembler.toModel(cozinhaService.salvar(cozinhaRetornada));
 	}
 
+	@Override
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Cozinha> deletar(@PathVariable Long id) {
 		cozinhaService.deletar(id);
 		return ResponseEntity.noContent().build();
 	}
-
+	
+	@Override
 	@GetMapping("/nome")
 	public ResponseEntity<?> pesquisaEmNome(String nome) {
 		return ResponseEntity.ok(cozinhaService.buscarPorNome(nome));
 	}
 
+	@Override
 	@GetMapping("/todas")
 	public List<Cozinha> listarTodasQueContemEmNome(@RequestParam String nome) {
 		return cozinhaService.buscarTodasContemNoNome(nome);

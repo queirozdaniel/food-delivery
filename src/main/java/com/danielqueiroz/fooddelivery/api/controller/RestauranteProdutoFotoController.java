@@ -34,8 +34,8 @@ import com.danielqueiroz.fooddelivery.domain.service.FotoStorageService.FotoRecu
 import com.danielqueiroz.fooddelivery.domain.service.ProdutoService;
 
 @RestController
-@RequestMapping("/restaurantes/{restauranteId}/produtos/{produtoId}/foto")
-public class RestauranteProdutoFotoController {
+@RequestMapping(value = "/restaurantes/{restauranteId}/produtos/{produtoId}/foto", produces = MediaType.APPLICATION_JSON_VALUE)
+public class RestauranteProdutoFotoController implements RestauranteProdutoFotoControllerOpenApi {
 
 	@Autowired
 	private FotoService fotoService;
@@ -49,6 +49,7 @@ public class RestauranteProdutoFotoController {
 	@Autowired
 	private FotoDTOAssembler fotoDTOAssembler;
 	
+	@Override
 	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public FotoProdutoDTO atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId,@Valid FotoProdutoInput fotoProduto) throws IOException {
 
@@ -67,14 +68,16 @@ public class RestauranteProdutoFotoController {
 		return fotoDTOAssembler.toModel(fotoSalva);
 	}
 	
-	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	@Override
+	@GetMapping
 	public FotoProdutoDTO buscar(@PathVariable Long restauranteId, 
 	        @PathVariable Long produtoId) {
 	    FotoProduto fotoProduto = fotoService.buscarPorId(restauranteId, produtoId);
 	    return fotoDTOAssembler.toModel(fotoProduto);
 	}
 	
-	@GetMapping(produces = MediaType.IMAGE_JPEG_VALUE)
+	@Override
+	@GetMapping(produces = MediaType.ALL_VALUE)
 	public ResponseEntity<?> buscarFoto(@PathVariable Long restauranteId, 
 	        @PathVariable Long produtoId, @RequestHeader(name = "accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
 		
@@ -104,6 +107,7 @@ public class RestauranteProdutoFotoController {
 		}
 	}
 	
+	@Override
 	@DeleteMapping
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void excluir(@PathVariable Long restauranteId, 

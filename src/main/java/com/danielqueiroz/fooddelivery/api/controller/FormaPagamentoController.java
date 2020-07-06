@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,13 +27,14 @@ import com.danielqueiroz.fooddelivery.api.model.FormaPagamentoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.FormaPagamentoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.FormaPagamentoInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.FormaPagamentoInput;
+import com.danielqueiroz.fooddelivery.api.openapi.controller.FormaPagamentoControllerOpenApi;
 import com.danielqueiroz.fooddelivery.domain.model.FormaPagamento;
 import com.danielqueiroz.fooddelivery.domain.repository.FormaPagamentoRepository;
 import com.danielqueiroz.fooddelivery.domain.service.FormaPagamentoService;
 
 @RestController
-@RequestMapping("/formas-pagamento")
-public class FormaPagamentoController {
+@RequestMapping(value = "/formas-pagamento",  produces = MediaType.APPLICATION_JSON_VALUE)
+public class FormaPagamentoController implements FormaPagamentoControllerOpenApi {
 
 	@Autowired
 	private FormaPagamentoService formaPagamentoService;
@@ -46,6 +48,7 @@ public class FormaPagamentoController {
 	@Autowired
 	private FormaPagamentoInputDisassembler formaPagamentoInputDisassembler;
 
+	@Override
 	@GetMapping
 	public ResponseEntity<List<FormaPagamentoDTO>> listar(ServletWebRequest request) {
 		ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
@@ -69,6 +72,7 @@ public class FormaPagamentoController {
 				.body(formasPagamentoDTO);
 	}
 
+	@Override
 	@GetMapping("/{id}")
 	public ResponseEntity<FormaPagamentoDTO> buscar(@PathVariable Long id, ServletWebRequest request) {
 
@@ -93,6 +97,7 @@ public class FormaPagamentoController {
 				.body(formaPagamentoDTO);
 	}
 
+	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public FormaPagamentoDTO adicionar(@RequestBody @Valid FormaPagamentoInput formaPagamentoInput) {
@@ -101,6 +106,7 @@ public class FormaPagamentoController {
 		return formaPagamentoDTOAssembler.toModel(formaPagamentoService.salvar(formaPagamento));
 	}
 
+	@Override
 	@PutMapping("/{id}")
 	public FormaPagamentoDTO atualizar(@PathVariable Long id,
 			@RequestBody @Valid FormaPagamentoInput formaPagamentoInput) {
@@ -111,6 +117,7 @@ public class FormaPagamentoController {
 		return formaPagamentoDTOAssembler.toModel(formaPagamentoService.salvar(formaPagamentoAtual));
 	}
 
+	@Override
 	@DeleteMapping("/{formaPagamentoId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void remover(@PathVariable Long formaPagamentoId) {

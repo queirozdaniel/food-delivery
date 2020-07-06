@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import com.danielqueiroz.fooddelivery.api.model.assembler.PedidoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.PedidoInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.PedidoResumoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.input.PedidoInput;
+import com.danielqueiroz.fooddelivery.api.openapi.controller.PedidoControllerOpenApi;
 import com.danielqueiroz.fooddelivery.core.data.PageableTranslator;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.exception.NegocioException;
@@ -35,8 +37,8 @@ import com.danielqueiroz.fooddelivery.infrastructure.repository.spec.PedidoSpecF
 import com.google.common.collect.ImmutableMap;
 
 @RestController
-@RequestMapping("/pedidos")
-public class PedidoController {
+@RequestMapping(value = "/pedidos", produces = MediaType.APPLICATION_JSON_VALUE)
+public class PedidoController implements PedidoControllerOpenApi {
 
 	@Autowired
 	private PedidoService pedidoService;
@@ -53,9 +55,10 @@ public class PedidoController {
 	@Autowired
 	private PedidoRepository pedidoRepository;
 	
+	@Override
 	@GetMapping
 	public Page<PedidoResumoDTO> pesquisar(PedidoFilter filtro, Pageable pageable){
-		
+	
 		pageable = traduzirPageable(pageable);
 		
 		Page<Pedido> pedidosPages = pedidoRepository.findAll(PedidoSpecFactory.usandoFiltro(filtro), pageable);
@@ -65,6 +68,7 @@ public class PedidoController {
 		return pedidosDTOPages;
 	}
 	
+	@Override
 	@GetMapping("/{codigoPedido}")
 	public PedidoDTO buscarPedido(@PathVariable String codigoPedido) {
 		Pedido pedido = pedidoService.buscarPorCodigo(codigoPedido);
@@ -72,6 +76,7 @@ public class PedidoController {
 		return pedidoDtoAssembler.toModel(pedido);
 	}
 	
+	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public PedidoDTO adicionar(@Valid @RequestBody PedidoInput pedidoInput) {

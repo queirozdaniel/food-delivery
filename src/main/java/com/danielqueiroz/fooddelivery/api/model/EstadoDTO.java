@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class EstadoDTO {
 
-	@ApiModelProperty( value = "ID do Estado",example = "1")
+	@ApiModelProperty(value = "ID do Estado", example = "1")
 	private Long id;
 	
 	@ApiModelProperty(example = "Paraná")
