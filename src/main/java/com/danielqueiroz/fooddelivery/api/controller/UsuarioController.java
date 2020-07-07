@@ -22,13 +22,14 @@ import com.danielqueiroz.fooddelivery.api.model.assembler.UsuarioInputDisassembl
 import com.danielqueiroz.fooddelivery.api.model.input.SenhaInput;
 import com.danielqueiroz.fooddelivery.api.model.input.UsuarioComSenhaInput;
 import com.danielqueiroz.fooddelivery.api.model.input.UsuarioInput;
+import com.danielqueiroz.fooddelivery.api.openapi.controller.UsuarioControllerOpenApi;
 import com.danielqueiroz.fooddelivery.domain.model.Usuario;
 import com.danielqueiroz.fooddelivery.domain.repository.UsuarioRepository;
 import com.danielqueiroz.fooddelivery.domain.service.UsuarioService;
 
 @RestController
 @RequestMapping(value = "/usuarios", produces = MediaType.APPLICATION_JSON_VALUE)
-public class UsuarioController {
+public class UsuarioController implements UsuarioControllerOpenApi {
 
 	@Autowired
     private UsuarioRepository usuarioRepository;
@@ -42,21 +43,24 @@ public class UsuarioController {
     @Autowired
     private UsuarioInputDisassembler usuarioInputDisassembler;
     
-    @GetMapping
+    @Override
+	@GetMapping
     public List<UsuarioDTO> listar() {
         List<Usuario> todasUsuarios = usuarioRepository.findAll();
         
         return usuarioDTOAssembler.toCollectionModel(todasUsuarios);
     }
     
-    @GetMapping("/{usuarioId}")
+    @Override
+	@GetMapping("/{usuarioId}")
     public UsuarioDTO buscar(@PathVariable Long id) {
         Usuario usuario = usuarioService.buscarPorId(id);
         
         return usuarioDTOAssembler.toModel(usuario);
     }
     
-    @PostMapping
+    @Override
+	@PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UsuarioDTO adicionar(@RequestBody @Valid UsuarioComSenhaInput usuarioInput) {
         Usuario usuario = usuarioInputDisassembler.toDomainObject(usuarioInput);
@@ -64,7 +68,8 @@ public class UsuarioController {
         return usuarioDTOAssembler.toModel(usuarioService.salvar(usuario));
     }
     
-    @PutMapping("/{usuarioId}")
+    @Override
+	@PutMapping("/{usuarioId}")
     public UsuarioDTO atualizar(@PathVariable Long id,
             @RequestBody @Valid UsuarioInput usuarioInput) {
         Usuario usuarioAtual = usuarioService.buscarPorId(id);
@@ -74,7 +79,8 @@ public class UsuarioController {
         return usuarioDTOAssembler.toModel(usuarioService.salvar(usuarioAtual));
     }
     
-    @PutMapping("/{usuarioId}/senha")
+    @Override
+	@PutMapping("/{usuarioId}/senha")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void alterarSenha(@PathVariable Long id, @RequestBody @Valid SenhaInput senha) {
         usuarioService.alterarSenha(id, senha.getSenhaAtual(), senha.getNovaSenha());

@@ -15,12 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.danielqueiroz.fooddelivery.api.model.GrupoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.GrupoDTOAssembler;
+import com.danielqueiroz.fooddelivery.api.openapi.controller.UsuarioGrupoControllerOpenApi;
 import com.danielqueiroz.fooddelivery.domain.model.Usuario;
 import com.danielqueiroz.fooddelivery.domain.service.UsuarioService;
 
 @RestController
 @RequestMapping(value = "/usuarios/{usuarioId}/grupos",  produces = MediaType.APPLICATION_JSON_VALUE)
-public class UsuarioGrupoController {
+public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
 
 	 @Autowired
 	    private UsuarioService usuarioService;
@@ -28,20 +29,23 @@ public class UsuarioGrupoController {
 	    @Autowired
 	    private GrupoDTOAssembler grupoDTOAssembler;
 	    
-	    @GetMapping
+	    @Override
+		@GetMapping
 	    public List<GrupoDTO> listar(@PathVariable Long usuarioId) {
 	        Usuario usuario = usuarioService.buscarPorId(usuarioId);
 	        
 	        return grupoDTOAssembler.toCollectionModel(usuario.getGrupos());
 	    }
 	    
-	    @DeleteMapping("/{grupoId}")
+	    @Override
+		@DeleteMapping("/{grupoId}")
 	    @ResponseStatus(HttpStatus.NO_CONTENT)
 	    public void desassociar(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
 	        usuarioService.desassociarGrupo(usuarioId, grupoId);
 	    }
 	    
-	    @PutMapping("/{grupoId}")
+	    @Override
+		@PutMapping("/{grupoId}")
 	    @ResponseStatus(HttpStatus.NO_CONTENT)
 	    public void associar(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
 	        usuarioService.associarGrupo(usuarioId, grupoId);
