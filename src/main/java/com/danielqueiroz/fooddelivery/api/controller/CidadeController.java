@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.danielqueiroz.fooddelivery.api.exceptionhandler.ProblemMessage;
 import com.danielqueiroz.fooddelivery.api.model.CidadeDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.CidadeDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.CidadeInputDisassembler;
@@ -28,8 +28,6 @@ import com.danielqueiroz.fooddelivery.domain.model.Cidade;
 import com.danielqueiroz.fooddelivery.domain.service.CidadeService;
 
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 
 @RestController
@@ -60,7 +58,17 @@ public class CidadeController implements CidadeControllerOpenApi {
 	public CidadeDTO buscarPorId(@ApiParam(value = "ID de uma cidade", example = "1") @PathVariable Long id) {
 		Cidade cidade = cidadeService.buscarPorId(id);
 	    
-	    return cidadeDTOAssembler.toModel(cidade);
+		CidadeDTO cidadeDto = cidadeDTOAssembler.toModel(cidade);
+		
+//		cidadeRetornada.add(new Link("http://localhost:8080/cidades/1"));
+		
+		cidadeDto.add(WebMvcLinkBuilder.linkTo(CidadeController.class).slash(cidadeDto.getId()).withSelfRel());
+		cidadeDto.add(WebMvcLinkBuilder.linkTo(CidadeController.class).withRel("cidades"));
+		cidadeDto.getEstado().add(WebMvcLinkBuilder.linkTo(EstadoController.class)
+				.slash(cidadeDto.getEstado().getId()).withSelfRel());
+		
+		
+	    return cidadeDto;
 	}
 
 	@Override
@@ -75,9 +83,6 @@ public class CidadeController implements CidadeControllerOpenApi {
 	}
 
 	@Override
-	@ApiResponses({
-		@ApiResponse(code =404, message = " Cidade não encontrada",response = ProblemMessage.class)
-	})
 	@PutMapping("/{id}")
 	public CidadeDTO atualizar(@ApiParam(name = "corpo",value = "Representação de uma cidade com dados atualizados") 
 										@RequestBody @Valid CidadeInput cidadeInput,
