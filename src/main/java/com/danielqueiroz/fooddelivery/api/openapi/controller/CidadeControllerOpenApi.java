@@ -1,7 +1,6 @@
 package com.danielqueiroz.fooddelivery.api.openapi.controller;
 
-import java.util.List;
-
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 
 import com.danielqueiroz.fooddelivery.api.exceptionhandler.ProblemMessage;
@@ -19,7 +18,7 @@ import io.swagger.annotations.ApiResponses;
 public interface CidadeControllerOpenApi {
 
 	@ApiOperation("Lista todas as cidades")
-	List<CidadeDTO> buscarTodos();
+	CollectionModel<CidadeDTO> buscarTodos();
 
 	@ApiOperation("Busca uma cidade por ID")
 	@ApiResponses({

@@ -1,30 +1,53 @@
 package com.danielqueiroz.fooddelivery.api.model.assembler;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
+import com.danielqueiroz.fooddelivery.api.controller.UsuarioController;
+import com.danielqueiroz.fooddelivery.api.controller.UsuarioGrupoController;
 import com.danielqueiroz.fooddelivery.api.model.UsuarioDTO;
 import com.danielqueiroz.fooddelivery.domain.model.Usuario;
 
 @Component
-public class UsuarioDTOAssembler {
-    
+public class UsuarioDTOAssembler extends RepresentationModelAssemblerSupport<Usuario, UsuarioDTO> {
+
 	@Autowired
-    private ModelMapper modelMapper;
+	private ModelMapper modelMapper;
+    
+	public UsuarioDTOAssembler() {
+		super(UsuarioController.class, UsuarioDTO.class);
+	}
+
     
     public UsuarioDTO toModel(Usuario usuario) {
-        return modelMapper.map(usuario, UsuarioDTO.class);
+    
+    	UsuarioDTO usuarioDto = modelMapper.map(usuario, UsuarioDTO.class);
+    	
+    	usuarioDto.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+    			.methodOn(UsuarioController.class)
+    			.buscar(usuarioDto.getId()))
+    			.withSelfRel());
+    	
+    	usuarioDto.add(WebMvcLinkBuilder
+    			.linkTo(UsuarioController.class)
+    			.withRel("usuarios"));
+        
+    	usuarioDto.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+    			.methodOn(UsuarioGrupoController.class)
+                .listar(usuario.getId()))
+    			.withRel("grupos-usuario"));
+    			
+    	return usuarioDto;
     }
     
-    public List<UsuarioDTO> toCollectionModel(Collection<Usuario> usuarios) {
-        return usuarios.stream()
-                .map(usuario -> toModel(usuario))
-                .collect(Collectors.toList());
+    @Override
+    public CollectionModel<UsuarioDTO> toCollectionModel(Iterable<? extends Usuario> entities) {
+        return super.toCollectionModel(entities)
+            .add(WebMvcLinkBuilder.linkTo(UsuarioController.class).withSelfRel());
     }  
     
 }

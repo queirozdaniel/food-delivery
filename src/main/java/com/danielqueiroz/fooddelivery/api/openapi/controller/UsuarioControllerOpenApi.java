@@ -1,8 +1,7 @@
 package com.danielqueiroz.fooddelivery.api.openapi.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.parsing.Problem;
+import org.springframework.hateoas.CollectionModel;
 
 import com.danielqueiroz.fooddelivery.api.model.UsuarioDTO;
 import com.danielqueiroz.fooddelivery.api.model.input.SenhaInput;
@@ -19,7 +18,7 @@ import io.swagger.annotations.ApiResponses;
 public interface UsuarioControllerOpenApi {
 
 	@ApiOperation("Lista todos os usuários")
-	List<UsuarioDTO> listar();
+	CollectionModel<UsuarioDTO> listar();
 
 	@ApiOperation("Busca um usuário por ID")
     @ApiResponses({

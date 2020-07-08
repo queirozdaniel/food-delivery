@@ -5,7 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +46,7 @@ public class CidadeController implements CidadeControllerOpenApi {
 
 	@Override
 	@GetMapping
-	public List<CidadeDTO> buscarTodos() {
+	public CollectionModel<CidadeDTO> buscarTodos() {
 		List<Cidade> cidades = cidadeService.buscarTodos();
 		
 		return cidadeDTOAssembler.toCollectionModel(cidades);
@@ -55,20 +55,10 @@ public class CidadeController implements CidadeControllerOpenApi {
 	@Override
 
 	@GetMapping("/{id}")
-	public CidadeDTO buscarPorId(@ApiParam(value = "ID de uma cidade", example = "1") @PathVariable Long id) {
+	public CidadeDTO buscarPorId(@PathVariable Long id) {
 		Cidade cidade = cidadeService.buscarPorId(id);
 	    
-		CidadeDTO cidadeDto = cidadeDTOAssembler.toModel(cidade);
-		
-//		cidadeRetornada.add(new Link("http://localhost:8080/cidades/1"));
-		
-		cidadeDto.add(WebMvcLinkBuilder.linkTo(CidadeController.class).slash(cidadeDto.getId()).withSelfRel());
-		cidadeDto.add(WebMvcLinkBuilder.linkTo(CidadeController.class).withRel("cidades"));
-		cidadeDto.getEstado().add(WebMvcLinkBuilder.linkTo(EstadoController.class)
-				.slash(cidadeDto.getEstado().getId()).withSelfRel());
-		
-		
-	    return cidadeDto;
+		return cidadeDTOAssembler.toModel(cidade);
 	}
 
 	@Override
