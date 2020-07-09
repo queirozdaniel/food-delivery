@@ -3,8 +3,8 @@ package com.danielqueiroz.fooddelivery.api.openapi.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.parsing.Problem;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 
 import com.danielqueiroz.fooddelivery.api.model.CozinhaDTO;
@@ -21,7 +21,7 @@ import io.swagger.annotations.ApiResponses;
 public interface CozinhaControllerOpenApi {
 
 	@ApiOperation("Lista as cozinhas com paginação")
-	Page<CozinhaDTO> listarTodas(Pageable pageable);
+	PagedModel<CozinhaDTO> listarTodas(Pageable pageable);
 
 	@ApiOperation("Busca uma cozinha por ID")
 	@ApiResponses({

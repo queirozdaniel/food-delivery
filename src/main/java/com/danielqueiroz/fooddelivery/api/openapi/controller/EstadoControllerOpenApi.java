@@ -1,8 +1,7 @@
 package com.danielqueiroz.fooddelivery.api.openapi.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.parsing.Problem;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 
 import com.danielqueiroz.fooddelivery.api.model.EstadoDTO;
@@ -19,7 +18,7 @@ import io.swagger.annotations.ApiResponses;
 public interface EstadoControllerOpenApi {
 
 	@ApiOperation("Lista todos estados")
-	List<EstadoDTO> buscarTodos();
+	CollectionModel<EstadoDTO> buscarTodos();
 
 	@ApiOperation("Busca um estado por ID")
 	@ApiResponses({

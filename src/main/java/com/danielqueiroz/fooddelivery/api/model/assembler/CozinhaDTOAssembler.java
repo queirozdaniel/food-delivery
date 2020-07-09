@@ -1,30 +1,34 @@
 package com.danielqueiroz.fooddelivery.api.model.assembler;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
+import com.danielqueiroz.fooddelivery.api.controller.CozinhaController;
 import com.danielqueiroz.fooddelivery.api.model.CozinhaDTO;
 import com.danielqueiroz.fooddelivery.domain.model.Cozinha;
 
 @Component
-public class CozinhaDTOAssembler {
+public class CozinhaDTOAssembler extends RepresentationModelAssemblerSupport<Cozinha, CozinhaDTO>{
 
 	@Autowired
 	private ModelMapper modelMapper;
-	
+
+	public CozinhaDTOAssembler() {
+		super(CozinhaController.class, CozinhaDTO.class);
+	}
+
 	public CozinhaDTO toModel(Cozinha cozinha) {
-        return modelMapper.map(cozinha, CozinhaDTO.class);
+		CozinhaDTO cozinhaDto = createModelWithId(cozinha.getId(), cozinha);
+		modelMapper.map(cozinha, cozinhaDto);
+
+		cozinhaDto.add(WebMvcLinkBuilder.linkTo(CozinhaController.class).withRel("cozinhas"));
+		
+		
+        return cozinhaDto;
     }
     
-    public List<CozinhaDTO> toCollectionModel(List<Cozinha> cozinhas) {
-        return cozinhas.stream()
-                .map(cozinha -> toModel(cozinha))
-                .collect(Collectors.toList());
-    }  
-	
 	
 }

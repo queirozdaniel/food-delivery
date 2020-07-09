@@ -1,8 +1,8 @@
 package com.danielqueiroz.fooddelivery.api.openapi.controller;
 
 import org.springframework.beans.factory.parsing.Problem;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
 
 import com.danielqueiroz.fooddelivery.api.model.PedidoDTO;
 import com.danielqueiroz.fooddelivery.api.model.PedidoResumoDTO;
@@ -25,7 +25,7 @@ public interface PedidoControllerOpenApi {
 		@ApiImplicitParam(value = "Nomes das propriedades para filtrar na resposta, separados por vírgula",
 				name = "campos", paramType = "query", type = "string")
 	})
-	Page<PedidoResumoDTO> pesquisar(PedidoFilter filtro, Pageable pageable);
+	PagedModel<PedidoResumoDTO> pesquisar(PedidoFilter filtro, Pageable pageable);
 
 	
 	@ApiOperation("Busca um pedido por código")

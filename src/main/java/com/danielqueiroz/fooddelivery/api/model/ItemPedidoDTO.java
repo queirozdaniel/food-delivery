@@ -2,6 +2,8 @@ package com.danielqueiroz.fooddelivery.api.model;
 
 import java.math.BigDecimal;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -10,7 +12,7 @@ import lombok.Setter;
 @ApiModel(value = "ItemPedido", description = "Representação de um Item de um Pedido")
 @Setter
 @Getter
-public class ItemPedidoDTO {
+public class ItemPedidoDTO extends RepresentationModel<ItemPedidoDTO> {
 
 	@ApiModelProperty(example = "1")
 	private Long produtoId;

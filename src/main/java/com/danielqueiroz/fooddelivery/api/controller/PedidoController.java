@@ -1,13 +1,15 @@
 package com.danielqueiroz.fooddelivery.api.controller;
 
-import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +36,6 @@ import com.danielqueiroz.fooddelivery.domain.model.Usuario;
 import com.danielqueiroz.fooddelivery.domain.repository.PedidoRepository;
 import com.danielqueiroz.fooddelivery.domain.service.PedidoService;
 import com.danielqueiroz.fooddelivery.infrastructure.repository.spec.PedidoSpecFactory;
-import com.google.common.collect.ImmutableMap;
 
 @RestController
 @RequestMapping(value = "/pedidos", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -42,68 +43,69 @@ public class PedidoController implements PedidoControllerOpenApi {
 
 	@Autowired
 	private PedidoService pedidoService;
-	
-	@Autowired 
+
+	@Autowired
 	private PedidoDTOAssembler pedidoDtoAssembler;
 
-	@Autowired 
+	@Autowired
 	private PedidoResumoDTOAssembler pedidoResumoDtoAssembler;
-	
+
 	@Autowired
 	private PedidoInputDisassembler pedidoInputDisassembler;
-	
+
 	@Autowired
 	private PedidoRepository pedidoRepository;
-	
+
+	@Autowired
+	private PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
+
 	@Override
 	@GetMapping
-	public Page<PedidoResumoDTO> pesquisar(PedidoFilter filtro, Pageable pageable){
-	
+	public PagedModel<PedidoResumoDTO> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
+
 		pageable = traduzirPageable(pageable);
-		
-		Page<Pedido> pedidosPages = pedidoRepository.findAll(PedidoSpecFactory.usandoFiltro(filtro), pageable);
-		List<PedidoResumoDTO> pedidosDTO = pedidoResumoDtoAssembler.toCollectionModel(pedidosPages.getContent());
-		Page<PedidoResumoDTO> pedidosDTOPages = new PageImpl<>(pedidosDTO, pageable, pedidosPages.getTotalElements());
-	
-		return pedidosDTOPages;
+
+		Page<Pedido> pedidosPage = pedidoRepository.findAll(PedidoSpecFactory.usandoFiltro(filtro), pageable);
+
+		PagedModel<PedidoResumoDTO> pedidosPagedModel = pagedResourcesAssembler.toModel(pedidosPage,
+				pedidoResumoDtoAssembler);
+
+		return pedidosPagedModel;
 	}
-	
+
 	@Override
 	@GetMapping("/{codigoPedido}")
 	public PedidoDTO buscarPedido(@PathVariable String codigoPedido) {
 		Pedido pedido = pedidoService.buscarPorCodigo(codigoPedido);
-		
+
 		return pedidoDtoAssembler.toModel(pedido);
 	}
-	
+
 	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public PedidoDTO adicionar(@Valid @RequestBody PedidoInput pedidoInput) {
-	    try {
-	        Pedido novoPedido = pedidoInputDisassembler.toDomainObject(pedidoInput);
+		try {
+			Pedido novoPedido = pedidoInputDisassembler.toDomainObject(pedidoInput);
 
-	        // TODO pegar usuário autenticado
-	        novoPedido.setCliente(new Usuario());
-	        novoPedido.getCliente().setId(1L);
+			// TODO pegar usuário autenticado
+			novoPedido.setCliente(new Usuario());
+			novoPedido.getCliente().setId(1L);
 
-	        novoPedido = pedidoService.emitir(novoPedido);
+			novoPedido = pedidoService.emitir(novoPedido);
 
-	        return pedidoDtoAssembler.toModel(novoPedido);
-	    } catch (EntidadeNaoEncontradaException e) {
-	        throw new NegocioException(e.getMessage(), e);
-	    }
+			return pedidoDtoAssembler.toModel(novoPedido);
+		} catch (EntidadeNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage(), e);
+		}
 	}
-	
+
 	private Pageable traduzirPageable(Pageable apiPageable) {
-		var mapeamento = ImmutableMap.of(
-					"codigo", "codigo",
-					"nomeCliente", "cliente.nome",
-					"restaurante.nome", "restaurante.nome",
-					"valorTotal", "valorTotal"
-				);
-		
+		var mapeamento = Map.of("codigo", "codigo", "subtotal", "subtotal", "taxaFrete", "taxaFrete", "valorTotal",
+				"valorTotal", "dataCriacao", "dataCriacao", "restaurante.nome", "restaurante.nome", "restaurante.id",
+				"restaurante.id", "cliente.id", "cliente.id", "cliente.nome", "cliente.nome");
+
 		return PageableTranslator.translate(apiPageable, mapeamento);
 	}
-	
+
 }

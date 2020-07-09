@@ -1,5 +1,8 @@
 package com.danielqueiroz.fooddelivery.api.model;
 
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+
 import com.danielqueiroz.fooddelivery.api.model.view.RestauranteView;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -9,9 +12,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @ApiModel(value = "Cozinha", description = "Representação de uma Cozinha")
+@Relation(collectionRelation = "cozinhas")
 @Getter
 @Setter
-public class CozinhaDTO {
+public class CozinhaDTO extends RepresentationModel<CozinhaDTO> {
 	
 	@ApiModelProperty(example = "1")
 	@JsonView(RestauranteView.Resumida.class)
