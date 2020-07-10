@@ -7,8 +7,8 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
+import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.controller.UsuarioController;
-import com.danielqueiroz.fooddelivery.api.controller.UsuarioGrupoController;
 import com.danielqueiroz.fooddelivery.api.model.UsuarioDTO;
 import com.danielqueiroz.fooddelivery.domain.model.Usuario;
 
@@ -17,7 +17,10 @@ public class UsuarioDTOAssembler extends RepresentationModelAssemblerSupport<Usu
 
 	@Autowired
 	private ModelMapper modelMapper;
-    
+	
+	@Autowired
+	private CreateLinks usuarioLinks;
+	
 	public UsuarioDTOAssembler() {
 		super(UsuarioController.class, UsuarioDTO.class);
 	}
@@ -25,21 +28,13 @@ public class UsuarioDTOAssembler extends RepresentationModelAssemblerSupport<Usu
     
     public UsuarioDTO toModel(Usuario usuario) {
     
-    	UsuarioDTO usuarioDto = modelMapper.map(usuario, UsuarioDTO.class);
+    	UsuarioDTO usuarioDto = createModelWithId(usuario.getId(),usuario);
+    	modelMapper.map(usuario, usuarioDto);
     	
-    	usuarioDto.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-    			.methodOn(UsuarioController.class)
-    			.buscar(usuarioDto.getId()))
-    			.withSelfRel());
+    	usuarioDto.add(usuarioLinks.linkToUsuarios("usuarios"));
     	
-    	usuarioDto.add(WebMvcLinkBuilder
-    			.linkTo(UsuarioController.class)
-    			.withRel("usuarios"));
+    	usuarioDto.add(usuarioLinks.linkToGruposUsuario(usuario.getId(), "grupos-usuario"));
         
-    	usuarioDto.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-    			.methodOn(UsuarioGrupoController.class)
-                .listar(usuario.getId()))
-    			.withRel("grupos-usuario"));
     			
     	return usuarioDto;
     }

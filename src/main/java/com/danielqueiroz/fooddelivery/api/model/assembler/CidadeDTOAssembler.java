@@ -7,8 +7,8 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
+import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.controller.CidadeController;
-import com.danielqueiroz.fooddelivery.api.controller.EstadoController;
 import com.danielqueiroz.fooddelivery.api.model.CidadeDTO;
 import com.danielqueiroz.fooddelivery.domain.model.Cidade;
 
@@ -17,6 +17,9 @@ public class CidadeDTOAssembler extends RepresentationModelAssemblerSupport<Cida
 
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private CreateLinks cidadeLinks;
 
 	public CidadeDTOAssembler() {
 		super(CidadeController.class, CidadeDTO.class);
@@ -24,28 +27,12 @@ public class CidadeDTOAssembler extends RepresentationModelAssemblerSupport<Cida
 	
 	public CidadeDTO toModel(Cidade cidade) {
 		
-//		Maneira alternativa para criar os links self
-//		CidadeDTO cidadeDto  = createModelWithId(cidade.getId(), cidade);
-//		modelMapper.map(cidade, cidadeDto);
-//		
+		CidadeDTO cidadeDto  = createModelWithId(cidade.getId(), cidade);
+		modelMapper.map(cidade, cidadeDto);
 		
-		CidadeDTO cidadeDto  = modelMapper.map(cidade, CidadeDTO.class);
+		cidadeDto.add(cidadeLinks.linkToCidades("cidades"));
 		
-		cidadeDto.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-				.methodOn(CidadeController.class)
-				.buscarPorId(cidadeDto.getId()))
-				.withSelfRel());
-		
-		cidadeDto.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-				.methodOn(CidadeController.class)
-				.buscarTodos())
-				.withRel("cidades"));
-		
-		cidadeDto.getEstado().add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-				.methodOn(EstadoController.class)
-				.buscarPorId(cidadeDto.getEstado().getId()))
-				.withSelfRel());
-		
+		cidadeDto.getEstado().add(cidadeLinks.linkToEstado(cidade.getEstado().getId()));
 		
         return cidadeDto;
     }

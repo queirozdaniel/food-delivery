@@ -3,15 +3,10 @@ package com.danielqueiroz.fooddelivery.api.model.assembler;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
-import com.danielqueiroz.fooddelivery.api.controller.CidadeController;
-import com.danielqueiroz.fooddelivery.api.controller.FormaPagamentoController;
+import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.controller.PedidoController;
-import com.danielqueiroz.fooddelivery.api.controller.RestauranteController;
-import com.danielqueiroz.fooddelivery.api.controller.RestauranteProdutoController;
-import com.danielqueiroz.fooddelivery.api.controller.UsuarioController;
 import com.danielqueiroz.fooddelivery.api.model.PedidoDTO;
 import com.danielqueiroz.fooddelivery.domain.model.Pedido;
 
@@ -20,6 +15,9 @@ public class PedidoDTOAssembler extends RepresentationModelAssemblerSupport<Pedi
 
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private CreateLinks pedidoLinks;
 
 	public PedidoDTOAssembler() {
 		super(PedidoController.class, PedidoDTO.class);
@@ -30,38 +28,37 @@ public class PedidoDTOAssembler extends RepresentationModelAssemblerSupport<Pedi
 		PedidoDTO pedidoDto = createModelWithId(pedido.getCodigo(), pedido);
 		modelMapper.map(pedido, pedidoDto);
 
-		pedidoDto.add(WebMvcLinkBuilder.linkTo(PedidoController.class).withRel("pedidos"));
-
-		pedidoDto.getRestaurante().add(WebMvcLinkBuilder.linkTo(
-				WebMvcLinkBuilder.methodOn(RestauranteController.class)
-				.buscarPorId(pedido.getRestaurante().getId()))
-				.withSelfRel());
+		pedidoDto.add(pedidoLinks.linksToPedidos());
+		
+		pedidoDto.getRestaurante().add(pedidoLinks.linkToRestaurante(pedido.getRestaurante().getId()));
+		
 
 		pedidoDto.getCliente()
-				.add(WebMvcLinkBuilder
-						.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class)
-						.buscar(pedido.getCliente().getId()))
-						.withSelfRel());
+				.add(pedidoLinks.linkToUsuario(pedido.getCliente().getId()));
 
-		// Passamos null no segundo argumento, porque é indiferente para a
-		// construção da URL do recurso de forma de pagamento
 		pedidoDto.getFormaPagamento()
-				.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-						.methodOn(FormaPagamentoController.class)
-						.buscar(pedido.getFormaPagamento().getId(), null))
-						.withSelfRel());
+				.add(pedidoLinks.linkToFormaPagamento(pedido.getFormaPagamento().getId()));
 
 		pedidoDto.getEnderecoEntrega().getCidade()
-				.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-						.methodOn(CidadeController.class)
-						.buscarPorId(pedido.getEnderecoEntrega().getCidade().getId()))
-						.withSelfRel());
+				.add(pedidoLinks.linkToCidade(pedido.getEnderecoEntrega().getCidade().getId()));
+
+		
+		if (pedido.podeSerConfirmado()) {
+			pedidoDto.add(pedidoLinks.linkToConfirmacaoPedido(pedido.getCodigo(), "confirmar"));
+		}
+
+		if (pedido.podeSerCancelado()) {
+			pedidoDto.add(pedidoLinks.linkToCancelamentoPedido(pedido.getCodigo(), "cancelar"));
+		}
+
+		
+		if (pedido.podeSerEntregue()) {
+			pedidoDto.add(pedidoLinks.linkToEntregaPedido(pedido.getCodigo(), "entregar"));
+		}
 
 		pedidoDto.getItens().forEach(item -> {
-			item.add(WebMvcLinkBuilder
-							.linkTo(WebMvcLinkBuilder.methodOn(RestauranteProdutoController.class)
-									.buscar(pedidoDto.getRestaurante().getId(), item.getProdutoId()))
-							.withRel("produto"));
+			item.add(pedidoLinks.linkToProduto(
+	                pedido.getRestaurante().getId(), item.getProdutoId(), "produto"));
 		});
 
 		return pedidoDto;

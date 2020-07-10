@@ -7,6 +7,7 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
+import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.controller.EstadoController;
 import com.danielqueiroz.fooddelivery.api.model.EstadoDTO;
 import com.danielqueiroz.fooddelivery.domain.model.Estado;
@@ -17,6 +18,9 @@ public class EstadoDTOAssembler extends RepresentationModelAssemblerSupport<Esta
 	@Autowired
 	private ModelMapper modelMapper;
 
+	@Autowired
+	private CreateLinks estadoLinks;
+
 	public EstadoDTOAssembler() {
 		super(EstadoController.class, EstadoDTO.class);
 	}
@@ -26,7 +30,7 @@ public class EstadoDTOAssembler extends RepresentationModelAssemblerSupport<Esta
 		EstadoDTO estadoDto = createModelWithId(estado.getId(), estado);
         modelMapper.map(estado, estadoDto);
         
-        estadoDto.add(WebMvcLinkBuilder.linkTo(EstadoController.class).withRel("estados"));
+        estadoDto.add(estadoLinks.linkToEstados("estados"));
         
         return estadoDto;
     }

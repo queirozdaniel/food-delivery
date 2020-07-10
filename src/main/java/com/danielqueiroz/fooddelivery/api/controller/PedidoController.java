@@ -27,6 +27,7 @@ import com.danielqueiroz.fooddelivery.api.model.assembler.PedidoInputDisassemble
 import com.danielqueiroz.fooddelivery.api.model.assembler.PedidoResumoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.input.PedidoInput;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.PedidoControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.data.PageWrapper;
 import com.danielqueiroz.fooddelivery.core.data.PageableTranslator;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.exception.NegocioException;
@@ -63,10 +64,12 @@ public class PedidoController implements PedidoControllerOpenApi {
 	@GetMapping
 	public PagedModel<PedidoResumoDTO> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
 
-		pageable = traduzirPageable(pageable);
+		Pageable pageableTraduzido = traduzirPageable(pageable);
 
-		Page<Pedido> pedidosPage = pedidoRepository.findAll(PedidoSpecFactory.usandoFiltro(filtro), pageable);
+		Page<Pedido> pedidosPage = pedidoRepository.findAll(PedidoSpecFactory.usandoFiltro(filtro), pageableTraduzido);
 
+		pedidosPage = new PageWrapper<>(pedidosPage, pageable);
+		
 		PagedModel<PedidoResumoDTO> pedidosPagedModel = pagedResourcesAssembler.toModel(pedidosPage,
 				pedidoResumoDtoAssembler);
 
