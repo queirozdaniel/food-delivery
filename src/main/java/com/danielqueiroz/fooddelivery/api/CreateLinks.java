@@ -16,6 +16,7 @@ import com.danielqueiroz.fooddelivery.api.controller.FluxoPedidoController;
 import com.danielqueiroz.fooddelivery.api.controller.FormaPagamentoController;
 import com.danielqueiroz.fooddelivery.api.controller.PedidoController;
 import com.danielqueiroz.fooddelivery.api.controller.RestauranteController;
+import com.danielqueiroz.fooddelivery.api.controller.RestauranteFormaPagamentoController;
 import com.danielqueiroz.fooddelivery.api.controller.RestauranteProdutoController;
 import com.danielqueiroz.fooddelivery.api.controller.RestauranteUsuarioResponsavelController;
 import com.danielqueiroz.fooddelivery.api.controller.UsuarioController;
@@ -29,7 +30,10 @@ public class CreateLinks {
 			new TemplateVariable("size", VariableType.REQUEST_PARAM),
 			new TemplateVariable("sort", VariableType.REQUEST_PARAM));
 	
-	public Link linksToPedidos() {
+	public static final TemplateVariables PROJECAO_VARIABLES = new TemplateVariables(
+			new TemplateVariable("projecao", VariableType.REQUEST_PARAM));  
+	
+	public Link linksToPedidos(String rel) {
 		TemplateVariables filtroVariables = new TemplateVariables(
 				new TemplateVariable("clienteId", VariableType.REQUEST_PARAM),
 				new TemplateVariable("restauranteId", VariableType.REQUEST_PARAM),
@@ -37,7 +41,7 @@ public class CreateLinks {
 				new TemplateVariable("dataCriacaoFim", VariableType.REQUEST_PARAM));
 
 		String pedidosUrl = WebMvcLinkBuilder.linkTo(PedidoController.class).toUri().toString();
-		return new Link(UriTemplate.of(pedidosUrl, PAGINACAO_VARIABLES.concat(filtroVariables)), "pedidos");
+		return new Link(UriTemplate.of(pedidosUrl, PAGINACAO_VARIABLES.concat(filtroVariables)), rel);
 	}
 	
 	public Link linkToRestaurante(Long restauranteId, String rel) {
@@ -164,4 +168,55 @@ public class CreateLinks {
 	public Link linkToCancelamentoPedido(String codigoPedido, String rel) {
 		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FluxoPedidoController.class).cancelar(codigoPedido)).withRel(rel);
 	}
+	
+	public Link linkToRestaurantes(String rel) {
+		String restaurantesUrl = WebMvcLinkBuilder.linkTo(RestauranteController.class).toUri().toString();
+	    
+	    return new Link(UriTemplate.of(restaurantesUrl, PROJECAO_VARIABLES), rel);
+	}
+
+	public Link linkToRestaurantes() {
+	    return linkToRestaurantes(IanaLinkRelations.SELF.value());
+	}
+
+	public Link linkToRestauranteFormasPagamento(Long restauranteId, String rel) {
+	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+	    		.methodOn(RestauranteFormaPagamentoController.class)
+	            .listar(restauranteId)).withRel(rel);
+	}
+
+	public Link linkToCozinha(Long cozinhaId, String rel) {
+	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+	    		.methodOn(CozinhaController.class)
+	            .buscarPorId(cozinhaId)).withRel(rel);
+	}
+
+	public Link linkToCozinha(Long cozinhaId) {
+	    return linkToCozinha(cozinhaId, IanaLinkRelations.SELF.value());
+	}  
+	
+	public Link linkToRestauranteAbertura(Long restauranteId, String rel) {
+	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+	    		.methodOn(RestauranteController.class)
+	            .abrir(restauranteId)).withRel(rel);
+	}
+
+	public Link linkToRestauranteFechamento(Long restauranteId, String rel) {
+	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+	    		.methodOn(RestauranteController.class)
+	            .fechar(restauranteId)).withRel(rel);
+	}
+
+	public Link linkToRestauranteInativacao(Long restauranteId, String rel) {
+	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+	    		.methodOn(RestauranteController.class)
+	            .inativar(restauranteId)).withRel(rel);
+	}
+
+	public Link linkToRestauranteAtivacao(Long restauranteId, String rel) {
+	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+	    		.methodOn(RestauranteController.class)
+	            .ativar(restauranteId)).withRel(rel);
+	}
+	
 }

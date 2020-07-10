@@ -4,7 +4,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import com.danielqueiroz.fooddelivery.api.CreateLinks;
@@ -38,6 +37,6 @@ public class EstadoDTOAssembler extends RepresentationModelAssemblerSupport<Esta
     @Override
     public CollectionModel<EstadoDTO> toCollectionModel(Iterable<? extends Estado> entities) {
         return super.toCollectionModel(entities)
-            .add(WebMvcLinkBuilder.linkTo(EstadoController.class).withSelfRel());
+            .add(estadoLinks.linkToEstados());
     } 
 }

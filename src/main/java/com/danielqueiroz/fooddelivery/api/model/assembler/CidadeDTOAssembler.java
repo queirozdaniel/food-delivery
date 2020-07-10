@@ -4,7 +4,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import com.danielqueiroz.fooddelivery.api.CreateLinks;
@@ -40,7 +39,7 @@ public class CidadeDTOAssembler extends RepresentationModelAssemblerSupport<Cida
 	
 	@Override
 	public CollectionModel<CidadeDTO> toCollectionModel(Iterable<? extends Cidade> entities) {
-		return super.toCollectionModel(entities).add(WebMvcLinkBuilder.linkTo(CidadeController.class).withSelfRel());
+		return super.toCollectionModel(entities).add(cidadeLinks.linkToCidades());
 	}
 	
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,22 +20,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.danielqueiroz.fooddelivery.api.model.RestauranteApenasNomeDTO;
+import com.danielqueiroz.fooddelivery.api.model.RestauranteBasicoDTO;
 import com.danielqueiroz.fooddelivery.api.model.RestauranteDTO;
+import com.danielqueiroz.fooddelivery.api.model.assembler.RestauranteApenasNomeDTOAssembler;
+import com.danielqueiroz.fooddelivery.api.model.assembler.RestauranteBasicoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.RestauranteDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.RestauranteInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.RestauranteInput;
-import com.danielqueiroz.fooddelivery.api.model.view.RestauranteView;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.RestauranteControllerOpenApi;
-import com.danielqueiroz.fooddelivery.api.openapi.model.RestauranteResumidoModelOpenApi;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.exception.NegocioException;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 import com.danielqueiroz.fooddelivery.domain.service.RestauranteService;
-import com.fasterxml.jackson.annotation.JsonView;
-
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 
 @CrossOrigin
 @RestController
@@ -46,47 +44,28 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 
 	@Autowired
 	private RestauranteDTOAssembler restauranteDTOAssembler;
+	
+	@Autowired
+	private RestauranteBasicoDTOAssembler restauranteBasicoDTOAssembler;
+	
+	@Autowired
+	private RestauranteApenasNomeDTOAssembler restauranteApenasNomeDTOAssembler;
 
 	@Autowired
 	private RestauranteInputDisassembler restauranteInputDisassembler;
 
 	@Override
-	@ApiOperation(value = "Lista restaurantes", response = RestauranteResumidoModelOpenApi.class)
-	@ApiImplicitParams({
-		@ApiImplicitParam(value="Nome da projeção de pedidos",name="projecao", paramType="query", type="string", allowableValues = "apenas-nome")
-	})
-	@JsonView(RestauranteView.Resumida.class)
 	@GetMapping
-	public List<RestauranteDTO> buscarTodosResumida() {
-		return restauranteDTOAssembler.toCollectionModel(restauranteService.buscarTodos());
+	public CollectionModel<RestauranteBasicoDTO> buscarTodosResumida() {
+		return restauranteBasicoDTOAssembler.toCollectionModel(restauranteService.buscarTodos());
 	}
 	
 	@Override
-	@ApiOperation(value = "Lista restaurantes", hidden = true)
-	@JsonView(RestauranteView.ApenasNome.class)
 	@GetMapping(params = "projecao=apenas-nome")
-	public List<RestauranteDTO> buscarApenasNome() {
-		return restauranteDTOAssembler.toCollectionModel(restauranteService.buscarTodos());
+	public CollectionModel<RestauranteApenasNomeDTO> buscarApenasNome() {
+		return restauranteApenasNomeDTOAssembler.toCollectionModel(restauranteService.buscarTodos());
 	}
 	
-//	@GetMapping
-//	public MappingJacksonValue buscarTodos(@RequestParam(required = false) String projecao) {
-//		List<Restaurante> resturantes = restauranteService.buscarTodos();
-//		List<RestauranteDTO> restautantesDTO = restauranteDTOAssembler.toCollectionModel(resturantes);
-//
-//		MappingJacksonValue restauranteMapper = new MappingJacksonValue(restautantesDTO);
-//
-//		restauranteMapper.setSerializationView(RestauranteView.Resumida.class);
-//
-//		if ("apenas-nome".equals(projecao)) {
-//			restauranteMapper.setSerializationView(RestauranteView.ApenasNome.class);
-//		} else if ("resumo".equals(projecao)) {
-//			restauranteMapper.setSerializationView(null);
-//		}
-//
-//		return restauranteMapper;
-//	}
-
 	@Override
 	@GetMapping("/{id}")
 	public RestauranteDTO buscarPorId(@PathVariable Long id) {
@@ -127,15 +106,19 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 	@Override
 	@PutMapping("/{id}/ativo")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void ativar(@PathVariable Long id) {
+	public ResponseEntity<Void> ativar(@PathVariable Long id) {
 		restauranteService.ativar(id);
+		
+		return ResponseEntity.noContent().build();
 	}
 
 	@Override
 	@DeleteMapping("/{id}/ativo")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void inativar(@PathVariable Long id) {
+	public ResponseEntity<Void> inativar(@PathVariable Long id) {
 		restauranteService.inativar(id);
+		
+		return ResponseEntity.noContent().build();
 	}
 
 	@Override
@@ -163,15 +146,19 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 	@Override
 	@PutMapping("/{restauranteId}/abertura")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void abrir(@PathVariable Long restauranteId) {
+	public ResponseEntity<Void> abrir(@PathVariable Long restauranteId) {
 		restauranteService.abrir(restauranteId);
+		
+		return ResponseEntity.noContent().build();
 	}
 
 	@Override
 	@PutMapping("/{restauranteId}/fechamento")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void fechar(@PathVariable Long restauranteId) {
+	public ResponseEntity<Void> fechar(@PathVariable Long restauranteId) {
 		restauranteService.fechar(restauranteId);
+		
+		return ResponseEntity.noContent().build();
 	}
 
 }
