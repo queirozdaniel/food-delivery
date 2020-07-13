@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.model.ProdutoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.ProdutoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.ProdutoInputDisassembler;
@@ -47,19 +49,23 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 	    @Autowired
 	    private ProdutoInputDisassembler produtoInputDisassembler;
 	    
+	    @Autowired
+		private CreateLinks createLinks;
+	    
 	    @Override
 		@GetMapping
-	    public List<ProdutoDTO> listar(@PathVariable Long restauranteId, @RequestParam(required = false) boolean incluirInativos) {
+	    public CollectionModel<ProdutoDTO> listar(@PathVariable Long restauranteId, @RequestParam(required = false) Boolean incluirInativos) {
 	        Restaurante restaurante = restauranteService.buscarPorId(restauranteId);
 	        
-	        List<Produto> todosProdutos;
+	        List<Produto> todosProdutos = null;
+	        
 	        if (incluirInativos) {				
 	        	todosProdutos = produtoRepository.findByRestaurante(restaurante);
 			} else {
 				todosProdutos = produtoRepository.findAtivosByRestaurante(restaurante);
 			}
 	        
-	        return produtoDTOAssembler.toCollectionModel(todosProdutos);
+	        return produtoDTOAssembler.toCollectionModel(todosProdutos).add(createLinks.linkToProdutos(restauranteId));
 	    }
 	    
 	    @Override

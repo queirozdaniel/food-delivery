@@ -1,28 +1,45 @@
 package com.danielqueiroz.fooddelivery.api.model.assembler;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
+import com.danielqueiroz.fooddelivery.api.CreateLinks;
+import com.danielqueiroz.fooddelivery.api.controller.GrupoController;
 import com.danielqueiroz.fooddelivery.api.model.GrupoDTO;
 import com.danielqueiroz.fooddelivery.domain.model.Grupo;
 
 @Component
-public class GrupoDTOAssembler {
+public class GrupoDTOAssembler extends RepresentationModelAssemblerSupport<Grupo, GrupoDTO>{
 
 	@Autowired
 	private ModelMapper modelMapper;
+
+	@Autowired
+	private CreateLinks createLinks;
 	
+	public GrupoDTOAssembler() {
+		super(GrupoController.class, GrupoDTO.class);
+	}
+
+	@Override
 	public GrupoDTO toModel(Grupo grupo) {
-		return modelMapper.map(grupo, GrupoDTO.class);
+		GrupoDTO grupoDto = createModelWithId(grupo.getId(), grupo);
+        modelMapper.map(grupo, grupoDto);
+        
+        grupoDto.add(createLinks.linkToGrupos("grupos"));
+        
+        grupoDto.add(createLinks.linkToGrupoPermissoes(grupo.getId(), "permissoes"));
+        
+        return grupoDto;
 	}
 	
-	public List<GrupoDTO> toCollectionModel(Collection<Grupo> grupos){
-		return grupos.stream().map(grupo -> toModel(grupo)).collect(Collectors.toList());
-	}
+	 @Override
+	    public CollectionModel<GrupoDTO> toCollectionModel(Iterable<? extends Grupo> entities) {
+	        return super.toCollectionModel(entities)
+	                .add(createLinks.linkToGrupos());
+	    }
 	
 }

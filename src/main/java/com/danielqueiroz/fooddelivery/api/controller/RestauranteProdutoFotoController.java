@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.danielqueiroz.fooddelivery.api.model.FotoProdutoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.FotoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.input.FotoProdutoInput;
+import com.danielqueiroz.fooddelivery.api.openapi.controller.RestauranteProdutoFotoControllerOpenApi;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.model.FotoProduto;
 import com.danielqueiroz.fooddelivery.domain.model.Produto;

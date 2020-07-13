@@ -1,8 +1,7 @@
 package com.danielqueiroz.fooddelivery.api.openapi.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.parsing.Problem;
+import org.springframework.hateoas.CollectionModel;
 
 import com.danielqueiroz.fooddelivery.api.model.GrupoDTO;
 import com.danielqueiroz.fooddelivery.api.model.input.GrupoInput;
@@ -17,7 +16,7 @@ import io.swagger.annotations.ApiResponses;
 public interface GrupoControllerOpenApi {
 
 	@ApiOperation("Lista os grupos")
-	List<GrupoDTO> listar();
+	CollectionModel<GrupoDTO> listar();
 
 	@ApiOperation("Busca um grupo por ID")
 	@ApiResponses({

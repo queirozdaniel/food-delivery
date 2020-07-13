@@ -1,4 +1,4 @@
-package com.danielqueiroz.fooddelivery.api.controller;
+package com.danielqueiroz.fooddelivery.api.openapi.controller;
 
 import java.io.IOException;
 

@@ -1,30 +1,33 @@
 package com.danielqueiroz.fooddelivery.api.model.assembler;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.model.PermissaoDTO;
 import com.danielqueiroz.fooddelivery.domain.model.Permissao;
 
 @Component
-public class PermissaoDTOAssembler {
+public class PermissaoDTOAssembler implements RepresentationModelAssembler<Permissao, PermissaoDTO> {
 
-    @Autowired
-    private ModelMapper modelMapper;
-    
-    public PermissaoDTO toModel(Permissao permissao) {
-        return modelMapper.map(permissao, PermissaoDTO.class);
-    }
-    
-    public List<PermissaoDTO> toCollectionModel(Collection<Permissao> permissoes) {
-        return permissoes.stream()
-                .map(permissao -> toModel(permissao))
-                .collect(Collectors.toList());
-    }
-	
+	@Autowired
+	private ModelMapper modelMapper;
+
+	@Autowired
+	private CreateLinks createLinks;
+
+	@Override
+	public PermissaoDTO toModel(Permissao permissao) {
+		PermissaoDTO permissaoDto = modelMapper.map(permissao, PermissaoDTO.class);
+		return permissaoDto;
+	}
+
+	@Override
+	public CollectionModel<PermissaoDTO> toCollectionModel(Iterable<? extends Permissao> entities) {
+		return RepresentationModelAssembler.super.toCollectionModel(entities).add(createLinks.linkToPermissoes());
+	}
+
 }

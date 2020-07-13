@@ -1,8 +1,8 @@
 package com.danielqueiroz.fooddelivery.api.openapi.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.parsing.Problem;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.ResponseEntity;
 
 import com.danielqueiroz.fooddelivery.api.model.GrupoDTO;
 
@@ -19,7 +19,7 @@ public interface UsuarioGrupoControllerOpenApi {
     @ApiResponses({
         @ApiResponse(code = 404, message = "Usuário não encontrado", response = Problem.class)
     })
-	List<GrupoDTO> listar(@ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId);
+	CollectionModel<GrupoDTO> listar(@ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId);
 
 	 @ApiOperation("Desassociação de grupo com usuário")
 	    @ApiResponses({
@@ -27,7 +27,7 @@ public interface UsuarioGrupoControllerOpenApi {
 	        @ApiResponse(code = 404, message = "Usuário ou grupo não encontrado", 
 	            response = Problem.class)
 	    })
-	void desassociar(@ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId, 
+	ResponseEntity<Void> desassociar(@ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId, 
 			@ApiParam(value = "ID do grupo", example = "1", required = true) Long grupoId);
 
 	@ApiOperation("Associação de grupo com usuário")
@@ -36,7 +36,7 @@ public interface UsuarioGrupoControllerOpenApi {
         @ApiResponse(code = 404, message = "Usuário ou grupo não encontrado", 
             response = Problem.class)
     })
-	void associar(@ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId, 
+	ResponseEntity<Void> associar(@ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId, 
 			@ApiParam(value = "ID do grupo", example = "1", required = true) Long grupoId);
 
 }
