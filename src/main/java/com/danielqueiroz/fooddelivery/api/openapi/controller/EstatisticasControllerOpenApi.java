@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import com.danielqueiroz.fooddelivery.api.controller.EstatisticasController.EstatisticasDTO;
 import com.danielqueiroz.fooddelivery.domain.filter.VendaDiariaFilter;
 import com.danielqueiroz.fooddelivery.domain.model.VendaDiaria;
 
@@ -25,10 +26,12 @@ public interface EstatisticasControllerOpenApi {
         @ApiImplicitParam(name = "dataCriacaoFim", value = "Data/hora final da criação do pedido",
             example = "2019-12-02T23:59:59Z", dataType = "date-time")
     })
-	List<VendaDiaria> consultarVendas(VendaDiariaFilter filtro, 
+	List<VendaDiaria> consultarVendasDiarias(VendaDiariaFilter filtro, 
 			@ApiParam(value = "Deslocamento de horário a ser considerado na consulta em relação ao UTC",
             defaultValue = "+00:00") String timeOffset);
 
 	ResponseEntity<byte[]> consultarVendasPdf(VendaDiariaFilter filtro, String timeOffset);
 
+	@ApiOperation(value = "Estatísticas", hidden = true)
+	EstatisticasDTO estatisticas();
 }

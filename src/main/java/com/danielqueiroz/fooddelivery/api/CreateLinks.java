@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.danielqueiroz.fooddelivery.api.controller.CidadeController;
 import com.danielqueiroz.fooddelivery.api.controller.CozinhaController;
 import com.danielqueiroz.fooddelivery.api.controller.EstadoController;
+import com.danielqueiroz.fooddelivery.api.controller.EstatisticasController;
 import com.danielqueiroz.fooddelivery.api.controller.FluxoPedidoController;
 import com.danielqueiroz.fooddelivery.api.controller.FormaPagamentoController;
 import com.danielqueiroz.fooddelivery.api.controller.GrupoController;
@@ -321,5 +322,23 @@ public class CreateLinks {
 	    		.methodOn(UsuarioGrupoController.class)
 	            .desassociar(usuarioId, grupoId)).withRel(rel);
 	} 
+	
+	public Link linkToEstatisticas(String rel) {
+	    return WebMvcLinkBuilder.linkTo(EstatisticasController.class).withRel(rel);
+	}
+
+	public Link linkToEstatisticasVendasDiarias(String rel) {
+	    TemplateVariables filtroVariables = new TemplateVariables(
+	            new TemplateVariable("restauranteId", VariableType.REQUEST_PARAM),
+	            new TemplateVariable("dataCriacaoInicio", VariableType.REQUEST_PARAM),
+	            new TemplateVariable("dataCriacaoFim", VariableType.REQUEST_PARAM),
+	            new TemplateVariable("timeOffset", VariableType.REQUEST_PARAM));
+	    
+	    String pedidosUrl = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+	    		.methodOn(EstatisticasController.class)
+	            .consultarVendasDiarias(null, null)).toUri().toString();
+	    
+	    return new Link(UriTemplate.of(pedidosUrl, filtroVariables), rel);
+	}  
 	
 }

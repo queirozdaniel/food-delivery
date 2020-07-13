@@ -3,6 +3,7 @@ package com.danielqueiroz.fooddelivery.api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.EstatisticasControllerOpenApi;
 import com.danielqueiroz.fooddelivery.domain.filter.VendaDiariaFilter;
 import com.danielqueiroz.fooddelivery.domain.model.VendaDiaria;
@@ -27,9 +29,12 @@ public class EstatisticasController implements EstatisticasControllerOpenApi {
 	@Autowired
 	private VendaReportService vendaReportService;
 	
+	@Autowired
+	private CreateLinks createLinks;
+	
 	@Override
 	@GetMapping(value = "/vendas-diarias", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<VendaDiaria> consultarVendas(VendaDiariaFilter filtro,@RequestParam(required = false, defaultValue = "+00:00") String timeOffset){
+	public List<VendaDiaria> consultarVendasDiarias(VendaDiariaFilter filtro,@RequestParam(required = false, defaultValue = "+00:00") String timeOffset){
 		return vendaQueryService.consultarVendasDiarias(filtro, timeOffset);
 	}
 	
@@ -45,4 +50,17 @@ public class EstatisticasController implements EstatisticasControllerOpenApi {
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).headers(headers).body(bytesPdf);
 	}
 	
+
+	@Override
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public EstatisticasDTO estatisticas() {
+	    var estatisticasDto = new EstatisticasDTO();
+	    
+	    estatisticasDto.add(createLinks.linkToEstatisticasVendasDiarias("vendas-diarias"));
+	    
+	    return estatisticasDto;
+	} 
+	
+	public static class EstatisticasDTO extends RepresentationModel<EstatisticasDTO> {
+	}
 }
