@@ -1,10 +1,10 @@
 package com.danielqueiroz.fooddelivery.api.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.model.FormaPagamentoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.FormaPagamentoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.RestauranteFormaPagamentoControllerOpenApi;
@@ -29,26 +30,43 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
 	@Autowired
 	private FormaPagamentoDTOAssembler formaPagamentoDtoAssembler;
 	
+	@Autowired
+	private CreateLinks createLinks;
+	
 	@Override
 	@GetMapping
-	public List<FormaPagamentoDTO> listar(@PathVariable Long restauranteId){
+	public CollectionModel<FormaPagamentoDTO> listar(@PathVariable Long restauranteId){
 		Restaurante restaurantes = restauranteService.buscarPorId(restauranteId);
 
-		return formaPagamentoDtoAssembler.toCollectionModel(restaurantes.getFormasPagamento());
+		CollectionModel<FormaPagamentoDTO> formasPagamentoDto = formaPagamentoDtoAssembler.toCollectionModel(restaurantes.getFormasPagamento())
+				.removeLinks()
+	            .add(createLinks.linkToRestauranteFormasPagamento(restauranteId))
+	            .add(createLinks.linkToRestauranteFormaPagamentoAssociacao(restauranteId, "associar"));
+		
+		formasPagamentoDto.getContent().forEach(formaPagamento -> {
+			formaPagamento.add(createLinks
+					.linkToRestauranteFormaPagamentoDesassociacao(restauranteId, formaPagamento.getId(), "desassociar"));
+		});
+		
+		return formasPagamentoDto;
 	}
 	
 	@Override
 	@DeleteMapping("/{formaPagamentoId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void desassociar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId) {
+	public ResponseEntity<Void> desassociar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId) {
 		restauranteService.desassociarFormaPagamento(restauranteId, formaPagamentoId);
+	
+		return ResponseEntity.noContent().build();
 	}
 
 	@Override
 	@PutMapping("/{formaPagamentoId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void associar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId) {
+	public ResponseEntity<Void> associar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId) {
 		restauranteService.desassociarFormaPagamento(restauranteId, formaPagamentoId);
+	
+		return ResponseEntity.noContent().build();
 	}
 	
 }

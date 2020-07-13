@@ -1,30 +1,45 @@
 package com.danielqueiroz.fooddelivery.api.model.assembler;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
+import com.danielqueiroz.fooddelivery.api.CreateLinks;
+import com.danielqueiroz.fooddelivery.api.controller.FormaPagamentoController;
 import com.danielqueiroz.fooddelivery.api.model.FormaPagamentoDTO;
 import com.danielqueiroz.fooddelivery.domain.model.FormaPagamento;
 
 @Component
-public class FormaPagamentoDTOAssembler {
+public class FormaPagamentoDTOAssembler extends RepresentationModelAssemblerSupport<FormaPagamento, FormaPagamentoDTO> {
 
 	@Autowired
     private ModelMapper modelMapper;
     
-    public FormaPagamentoDTO toModel(FormaPagamento formaPagamento) {
-        return modelMapper.map(formaPagamento, FormaPagamentoDTO.class);
+	@Autowired
+    private CreateLinks create;
+    
+    public FormaPagamentoDTOAssembler() {
+        super(FormaPagamentoController.class, FormaPagamentoDTO.class);
     }
     
-    public List<FormaPagamentoDTO> toCollectionModel(Collection<FormaPagamento> formasPagamentos) {
-        return formasPagamentos.stream()
-                .map(formaPagamento -> toModel(formaPagamento))
-                .collect(Collectors.toList());
+    @Override
+    public FormaPagamentoDTO toModel(FormaPagamento formaPagamento) {
+    	FormaPagamentoDTO formaPagamentoModel = 
+                createModelWithId(formaPagamento.getId(), formaPagamento);
+        
+        modelMapper.map(formaPagamento, formaPagamentoModel);
+        
+        formaPagamentoModel.add(create.linkToFormasPagamento("formasPagamento"));
+        
+        return formaPagamentoModel;
     }
+    
+    @Override
+    public CollectionModel<FormaPagamentoDTO> toCollectionModel(Iterable<? extends FormaPagamento> entities) {
+        return super.toCollectionModel(entities)
+            .add(create.linkToFormasPagamento());
+    }  
 	
 }

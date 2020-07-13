@@ -29,10 +29,10 @@ public class CreateLinks {
 			new TemplateVariable("page", VariableType.REQUEST_PARAM),
 			new TemplateVariable("size", VariableType.REQUEST_PARAM),
 			new TemplateVariable("sort", VariableType.REQUEST_PARAM));
-	
+
 	public static final TemplateVariables PROJECAO_VARIABLES = new TemplateVariables(
-			new TemplateVariable("projecao", VariableType.REQUEST_PARAM));  
-	
+			new TemplateVariable("projecao", VariableType.REQUEST_PARAM));
+
 	public Link linksToPedidos(String rel) {
 		TemplateVariables filtroVariables = new TemplateVariables(
 				new TemplateVariable("clienteId", VariableType.REQUEST_PARAM),
@@ -43,180 +43,208 @@ public class CreateLinks {
 		String pedidosUrl = WebMvcLinkBuilder.linkTo(PedidoController.class).toUri().toString();
 		return new Link(UriTemplate.of(pedidosUrl, PAGINACAO_VARIABLES.concat(filtroVariables)), rel);
 	}
-	
+
 	public Link linkToRestaurante(Long restauranteId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(RestauranteController.class)
-	            .buscarPorId(restauranteId)).withRel(rel);
+		return WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(RestauranteController.class).buscarPorId(restauranteId))
+				.withRel(rel);
 	}
 
 	public Link linkToRestaurante(Long restauranteId) {
-	    return linkToRestaurante(restauranteId, IanaLinkRelations.SELF.value());
+		return linkToRestaurante(restauranteId, IanaLinkRelations.SELF.value());
+	}
+
+	public Link linkToRestauranteResponsavelDesassociacao(Long restauranteId, Long usuarioId, String rel) {
+
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RestauranteUsuarioResponsavelController.class)
+				.desassociar(restauranteId, usuarioId)).withRel(rel);
+	}
+
+	public Link linkToRestauranteResponsavelAssociacao(Long restauranteId, String rel) {
+		return WebMvcLinkBuilder.linkTo(
+				WebMvcLinkBuilder.methodOn(RestauranteUsuarioResponsavelController.class).associar(restauranteId, null))
+				.withRel(rel);
 	}
 
 	public Link linkToUsuario(Long usuarioId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(UsuarioController.class)
-	            .buscar(usuarioId)).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class).buscar(usuarioId))
+				.withRel(rel);
 	}
 
 	public Link linkToUsuario(Long usuarioId) {
-	    return linkToUsuario(usuarioId, IanaLinkRelations.SELF.value());
+		return linkToUsuario(usuarioId, IanaLinkRelations.SELF.value());
 	}
 
 	public Link linkToUsuarios(String rel) {
-	    return WebMvcLinkBuilder.linkTo(UsuarioController.class).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(UsuarioController.class).withRel(rel);
 	}
 
 	public Link linkToUsuarios() {
-	    return linkToUsuarios(IanaLinkRelations.SELF.value());
+		return linkToUsuarios(IanaLinkRelations.SELF.value());
 	}
 
 	public Link linkToGruposUsuario(Long usuarioId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(UsuarioGrupoController.class)
-	            .listar(usuarioId)).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioGrupoController.class).listar(usuarioId))
+				.withRel(rel);
 	}
 
 	public Link linkToGruposUsuario(Long usuarioId) {
-	    return linkToGruposUsuario(usuarioId, IanaLinkRelations.SELF.value());
+		return linkToGruposUsuario(usuarioId, IanaLinkRelations.SELF.value());
 	}
 
 	public Link linkToResponsaveisRestaurante(Long restauranteId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(RestauranteUsuarioResponsavelController.class)
-	            .listar(restauranteId)).withRel(rel);
+		return WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(RestauranteUsuarioResponsavelController.class).listar(restauranteId))
+				.withRel(rel);
 	}
 
 	public Link linkToResponsaveisRestaurante(Long restauranteId) {
-	    return linkToResponsaveisRestaurante(restauranteId, IanaLinkRelations.SELF.value());
+		return linkToResponsaveisRestaurante(restauranteId, IanaLinkRelations.SELF.value());
 	}
 
 	public Link linkToFormaPagamento(Long formaPagamentoId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(FormaPagamentoController.class)
-	            .buscar(formaPagamentoId, null)).withRel(rel);
+		return WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(FormaPagamentoController.class).buscar(formaPagamentoId, null))
+				.withRel(rel);
 	}
 
 	public Link linkToFormaPagamento(Long formaPagamentoId) {
-	    return linkToFormaPagamento(formaPagamentoId, IanaLinkRelations.SELF.value());
+		return linkToFormaPagamento(formaPagamentoId, IanaLinkRelations.SELF.value());
+	}
+
+	public Link linkToRestauranteFormaPagamentoDesassociacao(Long restauranteId, Long formaPagamentoId, String rel) {
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RestauranteFormaPagamentoController.class)
+				.desassociar(restauranteId, formaPagamentoId)).withRel(rel);
+	}
+
+	public Link linkToRestauranteFormaPagamentoAssociacao(Long restauranteId, String rel) {
+		return WebMvcLinkBuilder.linkTo(
+				WebMvcLinkBuilder.methodOn(RestauranteFormaPagamentoController.class).associar(restauranteId, null))
+				.withRel(rel);
 	}
 
 	public Link linkToCidade(Long cidadeId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(CidadeController.class)
-	            .buscarPorId(cidadeId)).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CidadeController.class).buscarPorId(cidadeId))
+				.withRel(rel);
 	}
 
 	public Link linkToCidade(Long cidadeId) {
-	    return linkToCidade(cidadeId, IanaLinkRelations.SELF.value());
+		return linkToCidade(cidadeId, IanaLinkRelations.SELF.value());
 	}
 
 	public Link linkToCidades(String rel) {
-	    return WebMvcLinkBuilder.linkTo(CidadeController.class).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(CidadeController.class).withRel(rel);
 	}
 
 	public Link linkToCidades() {
-	    return linkToCidades(IanaLinkRelations.SELF.value());
+		return linkToCidades(IanaLinkRelations.SELF.value());
 	}
 
 	public Link linkToEstado(Long estadoId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(EstadoController.class)
-	            .buscarPorId(estadoId)).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EstadoController.class).buscarPorId(estadoId))
+				.withRel(rel);
 	}
 
 	public Link linkToEstado(Long estadoId) {
-	    return linkToEstado(estadoId, IanaLinkRelations.SELF.value());
+		return linkToEstado(estadoId, IanaLinkRelations.SELF.value());
 	}
 
 	public Link linkToEstados(String rel) {
-	    return WebMvcLinkBuilder.linkTo(EstadoController.class).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(EstadoController.class).withRel(rel);
 	}
 
 	public Link linkToEstados() {
-	    return linkToEstados(IanaLinkRelations.SELF.value());
+		return linkToEstados(IanaLinkRelations.SELF.value());
 	}
 
 	public Link linkToProduto(Long restauranteId, Long produtoId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(RestauranteProdutoController.class)
-	            .buscar(restauranteId, produtoId))
-	            .withRel(rel);
+		return WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(RestauranteProdutoController.class).buscar(restauranteId, produtoId))
+				.withRel(rel);
 	}
 
 	public Link linkToProduto(Long restauranteId, Long produtoId) {
-	    return linkToProduto(restauranteId, produtoId, IanaLinkRelations.SELF.value());
+		return linkToProduto(restauranteId, produtoId, IanaLinkRelations.SELF.value());
 	}
 
 	public Link linkToCozinhas(String rel) {
-	    return WebMvcLinkBuilder.linkTo(CozinhaController.class).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(CozinhaController.class).withRel(rel);
 	}
 
 	public Link linkToCozinhas() {
-	    return linkToCozinhas(IanaLinkRelations.SELF.value());
+		return linkToCozinhas(IanaLinkRelations.SELF.value());
 	}
-	
+
 	public Link linkToConfirmacaoPedido(String codigoPedido, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FluxoPedidoController.class).confirmar(codigoPedido)).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FluxoPedidoController.class).confirmar(codigoPedido))
+				.withRel(rel);
 	}
-	
+
 	public Link linkToEntregaPedido(String codigoPedido, String rel) {
-		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FluxoPedidoController.class).entregar(codigoPedido)).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FluxoPedidoController.class).entregar(codigoPedido))
+				.withRel(rel);
 	}
-	
+
 	public Link linkToCancelamentoPedido(String codigoPedido, String rel) {
-		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FluxoPedidoController.class).cancelar(codigoPedido)).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FluxoPedidoController.class).cancelar(codigoPedido))
+				.withRel(rel);
 	}
-	
+
 	public Link linkToRestaurantes(String rel) {
 		String restaurantesUrl = WebMvcLinkBuilder.linkTo(RestauranteController.class).toUri().toString();
-	    
-	    return new Link(UriTemplate.of(restaurantesUrl, PROJECAO_VARIABLES), rel);
+
+		return new Link(UriTemplate.of(restaurantesUrl, PROJECAO_VARIABLES), rel);
 	}
 
 	public Link linkToRestaurantes() {
-	    return linkToRestaurantes(IanaLinkRelations.SELF.value());
+		return linkToRestaurantes(IanaLinkRelations.SELF.value());
 	}
 
 	public Link linkToRestauranteFormasPagamento(Long restauranteId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(RestauranteFormaPagamentoController.class)
-	            .listar(restauranteId)).withRel(rel);
+		return WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(RestauranteFormaPagamentoController.class).listar(restauranteId))
+				.withRel(rel);
 	}
 
 	public Link linkToCozinha(Long cozinhaId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(CozinhaController.class)
-	            .buscarPorId(cozinhaId)).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CozinhaController.class).buscarPorId(cozinhaId))
+				.withRel(rel);
 	}
 
 	public Link linkToCozinha(Long cozinhaId) {
-	    return linkToCozinha(cozinhaId, IanaLinkRelations.SELF.value());
-	}  
-	
+		return linkToCozinha(cozinhaId, IanaLinkRelations.SELF.value());
+	}
+
 	public Link linkToRestauranteAbertura(Long restauranteId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(RestauranteController.class)
-	            .abrir(restauranteId)).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RestauranteController.class).abrir(restauranteId))
+				.withRel(rel);
 	}
 
 	public Link linkToRestauranteFechamento(Long restauranteId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(RestauranteController.class)
-	            .fechar(restauranteId)).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RestauranteController.class).fechar(restauranteId))
+				.withRel(rel);
 	}
 
 	public Link linkToRestauranteInativacao(Long restauranteId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(RestauranteController.class)
-	            .inativar(restauranteId)).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RestauranteController.class).inativar(restauranteId))
+				.withRel(rel);
 	}
 
 	public Link linkToRestauranteAtivacao(Long restauranteId, String rel) {
-	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-	    		.methodOn(RestauranteController.class)
-	            .ativar(restauranteId)).withRel(rel);
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RestauranteController.class).ativar(restauranteId))
+				.withRel(rel);
 	}
-	
+
+	public Link linkToRestauranteFormasPagamento(Long restauranteId) {
+		return linkToRestauranteFormasPagamento(restauranteId, IanaLinkRelations.SELF.value());
+	}
+
+	public Link linkToFormasPagamento(String rel) {
+		return WebMvcLinkBuilder.linkTo(FormaPagamentoController.class).withRel(rel);
+	}
+
+	public Link linkToFormasPagamento() {
+		return linkToFormasPagamento(IanaLinkRelations.SELF.value());
+	}
+
 }

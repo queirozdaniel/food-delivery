@@ -1,8 +1,7 @@
 package com.danielqueiroz.fooddelivery.api.openapi.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.parsing.Problem;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -19,7 +18,7 @@ import io.swagger.annotations.ApiResponses;
 public interface FormaPagamentoControllerOpenApi {
 
 	@ApiOperation("Lista as formas de pagamento")
-	ResponseEntity<List<FormaPagamentoDTO>> listar(ServletWebRequest request);
+	ResponseEntity<CollectionModel<FormaPagamentoDTO>> listar(ServletWebRequest request);
 
 	@ApiOperation("Busca uma forma de pagamento por ID")
 	@ApiResponses({
