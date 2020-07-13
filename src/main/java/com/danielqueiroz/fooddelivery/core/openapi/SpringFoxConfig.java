@@ -14,8 +14,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Links;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -23,11 +25,28 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.danielqueiroz.fooddelivery.api.exceptionhandler.ProblemMessage;
+import com.danielqueiroz.fooddelivery.api.model.CidadeDTO;
 import com.danielqueiroz.fooddelivery.api.model.CozinhaDTO;
+import com.danielqueiroz.fooddelivery.api.model.EstadoDTO;
+import com.danielqueiroz.fooddelivery.api.model.FormaPagamentoDTO;
+import com.danielqueiroz.fooddelivery.api.model.GrupoDTO;
 import com.danielqueiroz.fooddelivery.api.model.PedidoResumoDTO;
+import com.danielqueiroz.fooddelivery.api.model.PermissaoDTO;
+import com.danielqueiroz.fooddelivery.api.model.ProdutoDTO;
+import com.danielqueiroz.fooddelivery.api.model.RestauranteBasicoDTO;
+import com.danielqueiroz.fooddelivery.api.model.UsuarioDTO;
+import com.danielqueiroz.fooddelivery.api.openapi.model.CidadesModelOpenApi;
 import com.danielqueiroz.fooddelivery.api.openapi.model.CozinhasModelOpenApi;
+import com.danielqueiroz.fooddelivery.api.openapi.model.EstadosModelOpenApi;
+import com.danielqueiroz.fooddelivery.api.openapi.model.FormasPagamentoModelOpenApi;
+import com.danielqueiroz.fooddelivery.api.openapi.model.GruposModelOpenApi;
+import com.danielqueiroz.fooddelivery.api.openapi.model.LinksModelOpenApi;
 import com.danielqueiroz.fooddelivery.api.openapi.model.PageableModelOpenApi;
 import com.danielqueiroz.fooddelivery.api.openapi.model.PedidosModelOpenApi;
+import com.danielqueiroz.fooddelivery.api.openapi.model.PermissoesModelOpenApi;
+import com.danielqueiroz.fooddelivery.api.openapi.model.ProdutosModelOpenApi;
+import com.danielqueiroz.fooddelivery.api.openapi.model.RestaurantesBasicoModelOpenApi;
+import com.danielqueiroz.fooddelivery.api.openapi.model.UsuariosModelOpenApi;
 import com.fasterxml.classmate.TypeResolver;
 
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
@@ -69,12 +88,19 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 						Resource.class, File.class, Throwable.class, StackTraceElement.class,
 						Problem.class, ParseState.class, Location.class, InputStream.class)
 				.directModelSubstitute(Pageable.class, PageableModelOpenApi.class)
-				.alternateTypeRules(AlternateTypeRules.newRule(
-							typeResolver.resolve(Page.class, CozinhaDTO.class), 
-							CozinhasModelOpenApi.class),
-						AlternateTypeRules.newRule(
-								typeResolver.resolve(Page.class, PedidoResumoDTO.class), 
-								PedidosModelOpenApi.class))
+				.directModelSubstitute(Links.class, LinksModelOpenApi.class)
+				.alternateTypeRules(
+						AlternateTypeRules.newRule(typeResolver.resolve(PagedModel.class, CozinhaDTO.class), CozinhasModelOpenApi.class),
+						AlternateTypeRules.newRule(typeResolver.resolve(PagedModel.class, PedidoResumoDTO.class), PedidosModelOpenApi.class),
+						AlternateTypeRules.newRule(typeResolver.resolve(CollectionModel.class, CidadeDTO.class), CidadesModelOpenApi.class),
+						AlternateTypeRules.newRule(typeResolver.resolve(CollectionModel.class, EstadoDTO.class), EstadosModelOpenApi.class),
+						AlternateTypeRules.newRule(typeResolver.resolve(CollectionModel.class, FormaPagamentoDTO.class), FormasPagamentoModelOpenApi.class),
+						AlternateTypeRules.newRule(typeResolver.resolve(CollectionModel.class, GrupoDTO.class), GruposModelOpenApi.class),
+						AlternateTypeRules.newRule(typeResolver.resolve(CollectionModel.class, PermissaoDTO.class), PermissoesModelOpenApi.class),
+						AlternateTypeRules.newRule(typeResolver.resolve(CollectionModel.class, ProdutoDTO.class), ProdutosModelOpenApi.class),
+						AlternateTypeRules.newRule(typeResolver.resolve(CollectionModel.class, RestauranteBasicoDTO.class), RestaurantesBasicoModelOpenApi.class),
+						AlternateTypeRules.newRule(typeResolver.resolve(CollectionModel.class, UsuarioDTO.class), UsuariosModelOpenApi.class)
+						)
 				.tags(new Tag("Cidades", "Gerencia cidades"),
 				        new Tag("Grupos", "Gerencia os grupos de usuários"),
 				        new Tag("Cozinhas", "Gerencia as cozinhas"),

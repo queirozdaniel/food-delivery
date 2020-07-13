@@ -10,7 +10,6 @@ import com.danielqueiroz.fooddelivery.api.model.RestauranteApenasNomeDTO;
 import com.danielqueiroz.fooddelivery.api.model.RestauranteBasicoDTO;
 import com.danielqueiroz.fooddelivery.api.model.RestauranteDTO;
 import com.danielqueiroz.fooddelivery.api.model.input.RestauranteInput;
-import com.danielqueiroz.fooddelivery.api.openapi.model.RestauranteResumidoModelOpenApi;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 
 import io.swagger.annotations.Api;
@@ -20,11 +19,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Api(tags = "Restaurantes")
 public interface RestauranteControllerOpenApi {
 
-	@ApiOperation(value = "Lista restaurantes", response = RestauranteResumidoModelOpenApi.class)
+	@ApiOperation(value = "Lista restaurantes")
 	@ApiImplicitParams({
 		@ApiImplicitParam(value = "Nome da projeção de pedidos", allowableValues = "apenas-nome",
 				name = "projecao", paramType = "query", type = "string")
@@ -32,6 +32,7 @@ public interface RestauranteControllerOpenApi {
 //	@JsonView(RestauranteView.Resumida.class)
 	CollectionModel<RestauranteBasicoDTO> buscarTodosResumida();
 
+	@ApiIgnore
 	@ApiOperation(value = "Lista restaurantes", hidden = true)
 	CollectionModel<RestauranteApenasNomeDTO> buscarApenasNome();
 

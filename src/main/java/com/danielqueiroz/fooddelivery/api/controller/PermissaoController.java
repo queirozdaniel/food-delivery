@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +26,7 @@ public class PermissaoController implements PermissaoControllerOpenApi {
     private PermissaoDTOAssembler permissaoDTOAssembler;
 	
 	@Override
+	@GetMapping
 	public CollectionModel<PermissaoDTO> listar() {
 		List<Permissao> todasPermissoes = permissaoRepository.findAll();
         

@@ -1,17 +1,13 @@
 package com.danielqueiroz.fooddelivery.api.openapi.model;
 
-import java.util.List;
-
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-public class PagedModelApi<T> {
+@ApiModel("PageModel")
+@Data
+public class PageModelOpenApi {
 
-	private List<T> content;
-	
 	@ApiModelProperty(example= "10", value = "Quantidade de registros por página")
 	private Long size;
 	
