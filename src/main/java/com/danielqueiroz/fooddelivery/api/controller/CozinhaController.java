@@ -32,6 +32,9 @@ import com.danielqueiroz.fooddelivery.api.openapi.controller.CozinhaControllerOp
 import com.danielqueiroz.fooddelivery.domain.model.Cozinha;
 import com.danielqueiroz.fooddelivery.domain.service.CozinhaService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping(value = "/cozinhas", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CozinhaController implements CozinhaControllerOpenApi {
@@ -52,8 +55,9 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 	@Override
 	@GetMapping
 	public PagedModel<CozinhaDTO> listarTodas(@PageableDefault(size = 10) Pageable pageable) {
-		Page<Cozinha> cozinhasPages = cozinhaService.buscarTodos(pageable);
+		log.info("Consulta de cozinhas com páginas de {} registros...", pageable.getPageSize());
 		
+		Page<Cozinha> cozinhasPages = cozinhaService.buscarTodos(pageable);
 		PagedModel<CozinhaDTO> cozinhasPagedModel = pagedResourcesAssembler
 					.toModel(cozinhasPages, cozinhaDTOAssembler);
 		

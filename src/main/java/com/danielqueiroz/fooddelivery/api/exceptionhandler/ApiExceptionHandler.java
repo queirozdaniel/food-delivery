@@ -32,6 +32,9 @@ import com.danielqueiroz.fooddelivery.domain.exception.NegocioException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -211,8 +214,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 		String detail = "Ocorreu um erro interno inesperado no sistema. "
 				+ "Tente novamente e se o problema persistir, entre em contato " + "com o administrador do sistema.";
+		
+		log.error(ex.getMessage(), ex);
+
 		ProblemMessage problema = createProblemMessageBuilder(status, ProblemType.ERRO_EM_SISTEMA, detail)
 				.userMessage(MSG_ERRO_GENERICO).build();
+		
 		return handleExceptionInternal(ex, problema, new HttpHeaders(), status, request);
 	}
 
