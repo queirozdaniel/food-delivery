@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class LoggerInterceptor extends HandlerInterceptorAdapter {
 
+	//TODO: Implementar Logger para usar Loggly
 	/*
 	 *  Deverá loggar:
 	 *  - Horário de entrada da requisição
