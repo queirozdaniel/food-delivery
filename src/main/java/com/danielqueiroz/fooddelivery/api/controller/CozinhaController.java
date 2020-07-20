@@ -13,6 +13,7 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,7 +52,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 	@Autowired
 	private PagedResourcesAssembler<Cozinha> pagedResourcesAssembler;
 	
-
+	@PreAuthorize("isAuthenticated()")
 	@Override
 	@GetMapping
 	public PagedModel<CozinhaDTO> listarTodas(@PageableDefault(size = 10) Pageable pageable) {
@@ -64,6 +65,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 		return cozinhasPagedModel;
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@Override
 	@GetMapping("/{id}")
 	public CozinhaDTO buscarPorId(@PathVariable("id") Long id) {
@@ -72,6 +74,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 		return cozinhaDTOAssembler.toModel(cozinha);
 	}
 
+	@PreAuthorize("hasAuthority('EDITAR_COZINHAS')")
 	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -81,6 +84,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 		return cozinhaDTOAssembler.toModel(cozinhaService.salvar(cozinha));
 	}
 
+	@PreAuthorize("hasAuthority('EDITAR_COZINHAS')")
 	@Override
 	@PutMapping("/{id}")
 	public CozinhaDTO atualizar(@RequestBody CozinhaInput cozinhaInput, @PathVariable Long id) {
@@ -91,6 +95,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 		return cozinhaDTOAssembler.toModel(cozinhaService.salvar(cozinhaRetornada));
 	}
 
+	@PreAuthorize("hasAuthority('EDITAR_COZINHAS')")
 	@Override
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Cozinha> deletar(@PathVariable Long id) {
@@ -98,12 +103,14 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@Override
 	@GetMapping("/nome")
 	public ResponseEntity<?> pesquisaEmNome(String nome) {
 		return ResponseEntity.ok(cozinhaService.buscarPorNome(nome));
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@Override
 	@GetMapping("/todas")
 	public List<Cozinha> listarTodasQueContemEmNome(@RequestParam String nome) {

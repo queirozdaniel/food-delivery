@@ -29,6 +29,7 @@ import com.danielqueiroz.fooddelivery.api.model.input.PedidoInput;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.PedidoControllerOpenApi;
 import com.danielqueiroz.fooddelivery.core.data.PageWrapper;
 import com.danielqueiroz.fooddelivery.core.data.PageableTranslator;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.exception.NegocioException;
 import com.danielqueiroz.fooddelivery.domain.filter.PedidoFilter;
@@ -59,6 +60,9 @@ public class PedidoController implements PedidoControllerOpenApi {
 
 	@Autowired
 	private PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
+	
+	@Autowired
+	private UserSecurity userSecurity;
 
 	@Override
 	@GetMapping
@@ -91,9 +95,8 @@ public class PedidoController implements PedidoControllerOpenApi {
 		try {
 			Pedido novoPedido = pedidoInputDisassembler.toDomainObject(pedidoInput);
 
-			// TODO pegar usuário autenticado
 			novoPedido.setCliente(new Usuario());
-			novoPedido.getCliente().setId(1L);
+			novoPedido.getCliente().setId(userSecurity.getUsuarioId());
 
 			novoPedido = pedidoService.emitir(novoPedido);
 

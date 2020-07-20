@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ProblemType {
 	
+	ACESSO_NEGADO("/acesso-negado", "Acesso negado"),
 	DADOS_INVALIDOS("/dados-invalidos", "Dados inválidos"),
 	ERRO_EM_SISTEMA("/erro-em-sistema", "Ocorreu um erro no Sistema"), 
 	RECURSO_NAO_ENCONTRADO("/recurso-nao-encontrado", "Recurso não encontrado"),

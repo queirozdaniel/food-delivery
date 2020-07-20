@@ -1,14 +1,14 @@
 package com.danielqueiroz.fooddelivery.core.security;
 
-import javax.crypto.spec.SecretKeySpec;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 
 @Configuration
 @EnableWebSecurity
@@ -17,19 +17,26 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-			.authorizeRequests()
-				.anyRequest().authenticated()
-			.and()
-			.oauth2ResourceServer().jwt();
+			.csrf().disable()
+			.cors().and()
+			.oauth2ResourceServer()
+				.jwt()
+				.jwtAuthenticationConverter(jwtAuthenticationConverter());
 	}
-	
-	
-	@Bean
-	public JwtDecoder jwtDecoder() {
-		var sectretKey = new SecretKeySpec("food8284nasn2161ASdd37127394nansbcoa244234593473delivery".getBytes(), "HmacSHA256");
-		
-		return NimbusJwtDecoder.withSecretKey(sectretKey).build();
+
+	private JwtAuthenticationConverter jwtAuthenticationConverter() {
+		var jwtAuthenticationConverter = new JwtAuthenticationConverter();
+		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter( jwt -> {
+			var authorities = jwt.getClaimAsStringList("authorities");
+			
+			if (authorities == null) {
+				authorities = Collections.emptyList();
+			}
+			
+			return authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+		});
+				
+		return jwtAuthenticationConverter;
 	}
-	
 	
 }
