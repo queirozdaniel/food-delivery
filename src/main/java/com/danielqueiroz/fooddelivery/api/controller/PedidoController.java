@@ -29,6 +29,7 @@ import com.danielqueiroz.fooddelivery.api.model.input.PedidoInput;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.PedidoControllerOpenApi;
 import com.danielqueiroz.fooddelivery.core.data.PageWrapper;
 import com.danielqueiroz.fooddelivery.core.data.PageableTranslator;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.exception.NegocioException;
@@ -64,6 +65,7 @@ public class PedidoController implements PedidoControllerOpenApi {
 	@Autowired
 	private UserSecurity userSecurity;
 
+	@CheckSecurity.Pedidos.PodePesquisar
 	@Override
 	@GetMapping
 	public PagedModel<PedidoResumoDTO> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
@@ -80,6 +82,7 @@ public class PedidoController implements PedidoControllerOpenApi {
 		return pedidosPagedModel;
 	}
 
+	@CheckSecurity.Pedidos.PodeBuscar
 	@Override
 	@GetMapping("/{codigoPedido}")
 	public PedidoDTO buscarPedido(@PathVariable String codigoPedido) {
@@ -88,6 +91,7 @@ public class PedidoController implements PedidoControllerOpenApi {
 		return pedidoDtoAssembler.toModel(pedido);
 	}
 
+	@CheckSecurity.Pedidos.PodeCriar
 	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)

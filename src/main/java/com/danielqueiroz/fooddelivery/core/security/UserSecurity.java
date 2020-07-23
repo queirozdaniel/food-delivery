@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
+import com.danielqueiroz.fooddelivery.domain.repository.PedidoRepository;
 import com.danielqueiroz.fooddelivery.domain.repository.RestauranteRepository;
 
 @Component
@@ -13,6 +14,9 @@ public class UserSecurity {
 
 	@Autowired
 	private RestauranteRepository restauranteRepository;
+	
+	@Autowired
+	private PedidoRepository pedidoRepository;
 	
 	public Authentication getAuthentication() {
 		return SecurityContextHolder.getContext().getAuthentication();
@@ -25,7 +29,15 @@ public class UserSecurity {
 	}
 	
 	public boolean gerenciaRestaurante(Long restauranteId) {
-		return restauranteRepository.existsResponsavel(restauranteId, getUsuarioId());
+		 if (restauranteId == null) {
+		        return false;
+		    }
+		    
+		    return restauranteRepository.existsResponsavel(restauranteId, getUsuarioId());
+	}
+	
+	public boolean gerenciaRestauranteDoPedido(String codigoPedido) {
+	    return pedidoRepository.isPedidoGerenciadoPor(codigoPedido, getUsuarioId());
 	}
 	
 }
