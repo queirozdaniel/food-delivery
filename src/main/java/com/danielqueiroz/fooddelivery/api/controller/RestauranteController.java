@@ -88,12 +88,12 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 		return restauranteDTOAssembler.toModel(restauranteService.salvar(restauranteCriado));
 	}
 
-	@CheckSecurity.Restaurantes.PodeEditar
+	@CheckSecurity.Restaurantes.PodeEditarEGerenciar
 	@Override
-	@PutMapping("/{id}")
-	public RestauranteDTO atualizar(@RequestBody @Valid RestauranteInput restauranteInput, @PathVariable Long id) {
+	@PutMapping("/{restauranteId}")
+	public RestauranteDTO atualizar(@RequestBody @Valid RestauranteInput restauranteInput, @PathVariable Long restauranteId) {
 
-		Restaurante restauranteRetornado = restauranteService.buscarPorId(id);
+		Restaurante restauranteRetornado = restauranteService.buscarPorId(restauranteId);
 
 		restauranteInputDisassembler.copyToDomainObject(restauranteInput, restauranteRetornado);
 
@@ -154,7 +154,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 		}
 	}
 
-	@CheckSecurity.Restaurantes.PodeEditar
+	@CheckSecurity.Restaurantes.PodeEditarEGerenciar
 	@Override
 	@PutMapping("/{restauranteId}/abertura")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -164,7 +164,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 		return ResponseEntity.noContent().build();
 	}
 
-	@CheckSecurity.Restaurantes.PodeEditar
+	@CheckSecurity.Restaurantes.PodeEditarEGerenciar
 	@Override
 	@PutMapping("/{restauranteId}/fechamento")
 	@ResponseStatus(HttpStatus.NO_CONTENT)

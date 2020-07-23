@@ -24,6 +24,7 @@ import com.danielqueiroz.fooddelivery.api.model.assembler.ProdutoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.ProdutoInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.ProdutoInput;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.RestauranteProdutoControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Produto;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 import com.danielqueiroz.fooddelivery.domain.repository.ProdutoRepository;
@@ -52,6 +53,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 	    @Autowired
 		private CreateLinks createLinks;
 	    
+	    @CheckSecurity.Restaurantes.PodeConsultar
 	    @Override
 		@GetMapping
 	    public CollectionModel<ProdutoDTO> listar(@PathVariable Long restauranteId, @RequestParam(required = false) Boolean incluirInativos) {
@@ -68,6 +70,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 	        return produtoDTOAssembler.toCollectionModel(todosProdutos).add(createLinks.linkToProdutos(restauranteId));
 	    }
 	    
+	    @CheckSecurity.Restaurantes.PodeConsultar
 	    @Override
 		@GetMapping("/{produtoId}")
 	    public ProdutoDTO buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
@@ -76,6 +79,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 	        return produtoDTOAssembler.toModel(produto);
 	    }
 	    
+	    @CheckSecurity.Restaurantes.PodeEditarEGerenciar
 	    @Override
 		@PostMapping
 	    @ResponseStatus(HttpStatus.CREATED)
@@ -91,6 +95,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 	        return produtoDTOAssembler.toModel(produto);
 	    }
 	    
+	    @CheckSecurity.Restaurantes.PodeEditarEGerenciar
 	    @Override
 		@PutMapping("/{produtoId}")
 	    public ProdutoDTO atualizar(@PathVariable Long restauranteId, @PathVariable Long produtoId,

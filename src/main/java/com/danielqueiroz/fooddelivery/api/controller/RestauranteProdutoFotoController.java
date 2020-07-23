@@ -27,6 +27,7 @@ import com.danielqueiroz.fooddelivery.api.model.FotoProdutoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.FotoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.input.FotoProdutoInput;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.RestauranteProdutoFotoControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.model.FotoProduto;
 import com.danielqueiroz.fooddelivery.domain.model.Produto;
@@ -51,6 +52,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
 	@Autowired
 	private FotoDTOAssembler fotoDTOAssembler;
 	
+	@CheckSecurity.Restaurantes.PodeEditarEGerenciar
 	@Override
 	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public FotoProdutoDTO atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId,@Valid FotoProdutoInput fotoProduto, @RequestPart(required = true) MultipartFile arquivo) throws IOException {
@@ -69,6 +71,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
 		return fotoDTOAssembler.toModel(fotoSalva);
 	}
 	
+	@CheckSecurity.Restaurantes.PodeConsultar
 	@Override
 	@GetMapping
 	public FotoProdutoDTO buscar(@PathVariable Long restauranteId, 
@@ -108,6 +111,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
 		}
 	}
 	
+	@CheckSecurity.Restaurantes.PodeEditarEGerenciar
 	@Override
 	@DeleteMapping
 	@ResponseStatus(HttpStatus.NO_CONTENT)
