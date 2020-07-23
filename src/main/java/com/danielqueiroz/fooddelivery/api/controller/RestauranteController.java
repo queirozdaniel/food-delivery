@@ -29,6 +29,7 @@ import com.danielqueiroz.fooddelivery.api.model.assembler.RestauranteDTOAssemble
 import com.danielqueiroz.fooddelivery.api.model.assembler.RestauranteInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.RestauranteInput;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.RestauranteControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.exception.EntidadeNaoEncontradaException;
 import com.danielqueiroz.fooddelivery.domain.exception.NegocioException;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
@@ -54,18 +55,21 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 	@Autowired
 	private RestauranteInputDisassembler restauranteInputDisassembler;
 
+	@CheckSecurity.Restaurantes.PodeConsultar
 	@Override
 	@GetMapping
 	public CollectionModel<RestauranteBasicoDTO> buscarTodosResumida() {
 		return restauranteBasicoDTOAssembler.toCollectionModel(restauranteService.buscarTodos());
 	}
 	
+	@CheckSecurity.Restaurantes.PodeConsultar
 	@Override
 	@GetMapping(params = "projecao=apenas-nome")
 	public CollectionModel<RestauranteApenasNomeDTO> buscarApenasNome() {
 		return restauranteApenasNomeDTOAssembler.toCollectionModel(restauranteService.buscarTodos());
 	}
 	
+	@CheckSecurity.Restaurantes.PodeConsultar
 	@Override
 	@GetMapping("/{id}")
 	public RestauranteDTO buscarPorId(@PathVariable Long id) {
@@ -74,6 +78,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 		return restauranteDTOAssembler.toModel(restaurante);
 	}
 
+	@CheckSecurity.Restaurantes.PodeEditar
 	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -83,6 +88,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 		return restauranteDTOAssembler.toModel(restauranteService.salvar(restauranteCriado));
 	}
 
+	@CheckSecurity.Restaurantes.PodeEditar
 	@Override
 	@PutMapping("/{id}")
 	public RestauranteDTO atualizar(@RequestBody @Valid RestauranteInput restauranteInput, @PathVariable Long id) {
@@ -95,6 +101,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 
 	}
 
+	@CheckSecurity.Restaurantes.PodeEditar
 	@Override
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Restaurante> deletar(@PathVariable Long id) {
@@ -103,6 +110,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 		return ResponseEntity.noContent().build();
 	}
 
+	@CheckSecurity.Restaurantes.PodeEditar
 	@Override
 	@PutMapping("/{id}/ativo")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -112,6 +120,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 		return ResponseEntity.noContent().build();
 	}
 
+	@CheckSecurity.Restaurantes.PodeEditar
 	@Override
 	@DeleteMapping("/{id}/ativo")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -121,6 +130,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 		return ResponseEntity.noContent().build();
 	}
 
+	@CheckSecurity.Restaurantes.PodeEditar
 	@Override
 	@PutMapping("/ativacoes")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -132,6 +142,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 		}
 	}
 
+	@CheckSecurity.Restaurantes.PodeEditar
 	@Override
 	@DeleteMapping("/ativacoes")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -143,6 +154,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 		}
 	}
 
+	@CheckSecurity.Restaurantes.PodeEditar
 	@Override
 	@PutMapping("/{restauranteId}/abertura")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -152,6 +164,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 		return ResponseEntity.noContent().build();
 	}
 
+	@CheckSecurity.Restaurantes.PodeEditar
 	@Override
 	@PutMapping("/{restauranteId}/fechamento")
 	@ResponseStatus(HttpStatus.NO_CONTENT)

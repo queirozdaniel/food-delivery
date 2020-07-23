@@ -13,7 +13,6 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +29,7 @@ import com.danielqueiroz.fooddelivery.api.model.assembler.CozinhaDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.CozinhaInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.CozinhaInput;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.CozinhaControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Cozinha;
 import com.danielqueiroz.fooddelivery.domain.service.CozinhaService;
 
@@ -51,8 +51,8 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 	
 	@Autowired
 	private PagedResourcesAssembler<Cozinha> pagedResourcesAssembler;
-	
-	@PreAuthorize("isAuthenticated()")
+
+	@CheckSecurity.Cozinhas.PodeConsultar
 	@Override
 	@GetMapping
 	public PagedModel<CozinhaDTO> listarTodas(@PageableDefault(size = 10) Pageable pageable) {
@@ -65,7 +65,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 		return cozinhasPagedModel;
 	}
 
-	@PreAuthorize("isAuthenticated()")
+	@CheckSecurity.Cozinhas.PodeConsultar
 	@Override
 	@GetMapping("/{id}")
 	public CozinhaDTO buscarPorId(@PathVariable("id") Long id) {
@@ -74,7 +74,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 		return cozinhaDTOAssembler.toModel(cozinha);
 	}
 
-	@PreAuthorize("hasAuthority('EDITAR_COZINHAS')")
+	@CheckSecurity.Cozinhas.PodeEditar
 	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -84,7 +84,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 		return cozinhaDTOAssembler.toModel(cozinhaService.salvar(cozinha));
 	}
 
-	@PreAuthorize("hasAuthority('EDITAR_COZINHAS')")
+	@CheckSecurity.Cozinhas.PodeEditar
 	@Override
 	@PutMapping("/{id}")
 	public CozinhaDTO atualizar(@RequestBody CozinhaInput cozinhaInput, @PathVariable Long id) {
@@ -95,7 +95,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 		return cozinhaDTOAssembler.toModel(cozinhaService.salvar(cozinhaRetornada));
 	}
 
-	@PreAuthorize("hasAuthority('EDITAR_COZINHAS')")
+	@CheckSecurity.Cozinhas.PodeEditar
 	@Override
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Cozinha> deletar(@PathVariable Long id) {
@@ -103,14 +103,14 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@PreAuthorize("isAuthenticated()")
+	@CheckSecurity.Cozinhas.PodeConsultar
 	@Override
 	@GetMapping("/nome")
 	public ResponseEntity<?> pesquisaEmNome(String nome) {
 		return ResponseEntity.ok(cozinhaService.buscarPorNome(nome));
 	}
 
-	@PreAuthorize("isAuthenticated()")
+	@CheckSecurity.Cozinhas.PodeConsultar
 	@Override
 	@GetMapping("/todas")
 	public List<Cozinha> listarTodasQueContemEmNome(@RequestParam String nome) {
