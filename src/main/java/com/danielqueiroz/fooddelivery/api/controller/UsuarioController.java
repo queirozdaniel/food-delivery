@@ -24,6 +24,7 @@ import com.danielqueiroz.fooddelivery.api.model.input.SenhaInput;
 import com.danielqueiroz.fooddelivery.api.model.input.UsuarioComSenhaInput;
 import com.danielqueiroz.fooddelivery.api.model.input.UsuarioInput;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.UsuarioControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Usuario;
 import com.danielqueiroz.fooddelivery.domain.repository.UsuarioRepository;
 import com.danielqueiroz.fooddelivery.domain.service.UsuarioService;
@@ -44,6 +45,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     @Autowired
     private UsuarioInputDisassembler usuarioInputDisassembler;
     
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @Override
 	@GetMapping
     public CollectionModel<UsuarioDTO> listar() {
@@ -52,6 +54,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         return usuarioDTOAssembler.toCollectionModel(todasUsuarios);
     }
     
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @Override
 	@GetMapping("/{id}")
     public UsuarioDTO buscar(@PathVariable Long id) {
@@ -61,6 +64,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         return usuarioDTOAssembler.toModel(usuario);
     }
     
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @Override
 	@PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -70,6 +74,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         return usuarioDTOAssembler.toModel(usuarioService.salvar(usuario));
     }
     
+    @CheckSecurity.UsuariosGruposPermissoes.PodeAlterarUsuario
     @Override
 	@PutMapping("/{id}")
     public UsuarioDTO atualizar(@PathVariable Long id,
@@ -81,6 +86,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         return usuarioDTOAssembler.toModel(usuarioService.salvar(usuarioAtual));
     }
     
+    @CheckSecurity.UsuariosGruposPermissoes.PodeAlterarPropriaSenha
     @Override
 	@PutMapping("/{id}/senha")
     @ResponseStatus(HttpStatus.NO_CONTENT)

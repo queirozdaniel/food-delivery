@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.EstatisticasControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.filter.VendaDiariaFilter;
 import com.danielqueiroz.fooddelivery.domain.model.VendaDiaria;
 import com.danielqueiroz.fooddelivery.domain.service.VendaQueryService;
@@ -32,12 +33,14 @@ public class EstatisticasController implements EstatisticasControllerOpenApi {
 	@Autowired
 	private CreateLinks createLinks;
 	
+	@CheckSecurity.Estatisticas.PodeConsultar
 	@Override
 	@GetMapping(value = "/vendas-diarias", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<VendaDiaria> consultarVendasDiarias(VendaDiariaFilter filtro,@RequestParam(required = false, defaultValue = "+00:00") String timeOffset){
 		return vendaQueryService.consultarVendasDiarias(filtro, timeOffset);
 	}
 	
+	@CheckSecurity.Estatisticas.PodeConsultar
 	@Override
 	@GetMapping(value = "/vendas-diarias", produces = MediaType.APPLICATION_PDF_VALUE)
 	public ResponseEntity<byte[]> consultarVendasPdf(VendaDiariaFilter filtro,@RequestParam(required = false, defaultValue = "+00:00") String timeOffset){
@@ -50,7 +53,7 @@ public class EstatisticasController implements EstatisticasControllerOpenApi {
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).headers(headers).body(bytesPdf);
 	}
 	
-
+	@CheckSecurity.Estatisticas.PodeConsultar
 	@Override
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public EstatisticasDTO estatisticas() {

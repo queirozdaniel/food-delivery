@@ -24,6 +24,7 @@ import com.danielqueiroz.fooddelivery.api.model.assembler.CidadeDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.CidadeInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.CidadeInput;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.CidadeControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Cidade;
 import com.danielqueiroz.fooddelivery.domain.service.CidadeService;
 
@@ -43,7 +44,7 @@ public class CidadeController implements CidadeControllerOpenApi {
 	@Autowired
 	private CidadeInputDisassembler cidadeInputDisassembler;    
 	
-
+	@CheckSecurity.Cidades.PodeConsultar
 	@Override
 	@GetMapping
 	public CollectionModel<CidadeDTO> buscarTodos() {
@@ -52,8 +53,8 @@ public class CidadeController implements CidadeControllerOpenApi {
 		return cidadeDTOAssembler.toCollectionModel(cidades);
 	}
 
+	@CheckSecurity.Cidades.PodeConsultar
 	@Override
-
 	@GetMapping("/{id}")
 	public CidadeDTO buscarPorId(@PathVariable Long id) {
 		Cidade cidade = cidadeService.buscarPorId(id);
@@ -61,6 +62,7 @@ public class CidadeController implements CidadeControllerOpenApi {
 		return cidadeDTOAssembler.toModel(cidade);
 	}
 
+	@CheckSecurity.Cidades.PodeEditar
 	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -72,6 +74,7 @@ public class CidadeController implements CidadeControllerOpenApi {
         return cidadeDTOAssembler.toModel(cidadeService.salvar(cidade));
 	}
 
+	@CheckSecurity.Cidades.PodeEditar
 	@Override
 	@PutMapping("/{id}")
 	public CidadeDTO atualizar(@ApiParam(name = "corpo",value = "Representação de uma cidade com dados atualizados") 
@@ -84,6 +87,7 @@ public class CidadeController implements CidadeControllerOpenApi {
         return cidadeDTOAssembler.toModel(cidadeService.salvar(cidadeRetornada));
 	}
 
+	@CheckSecurity.Cidades.PodeEditar
 	@Override
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Cidade> deletar(@ApiParam(value = "ID de uma cidade", example = "1")  @PathVariable Long id) {

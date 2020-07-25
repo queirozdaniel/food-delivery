@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.danielqueiroz.fooddelivery.api.model.PermissaoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.PermissaoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.PermissaoControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Permissao;
 import com.danielqueiroz.fooddelivery.domain.repository.PermissaoRepository;
 
@@ -25,6 +26,7 @@ public class PermissaoController implements PermissaoControllerOpenApi {
     @Autowired
     private PermissaoDTOAssembler permissaoDTOAssembler;
 	
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
 	@Override
 	@GetMapping
 	public CollectionModel<PermissaoDTO> listar() {

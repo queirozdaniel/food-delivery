@@ -24,6 +24,7 @@ import com.danielqueiroz.fooddelivery.api.model.assembler.EstadoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.EstadoInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.EstadoInput;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.EstadoControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Estado;
 import com.danielqueiroz.fooddelivery.domain.service.EstadoService;
 
@@ -40,7 +41,7 @@ public class EstadoController implements EstadoControllerOpenApi {
 	@Autowired
 	private EstadoInputDisassembler estadoInputDisassembler;  
 	
-
+	@CheckSecurity.Estados.PodeConsultar
 	@Override
 	@GetMapping
 	public CollectionModel<EstadoDTO> buscarTodos() {
@@ -49,6 +50,7 @@ public class EstadoController implements EstadoControllerOpenApi {
 	    return estadoDTOAssembler.toCollectionModel(todosEstados);
 	}
 
+	@CheckSecurity.Estados.PodeConsultar
 	@Override
 	@GetMapping("/{id}")
 	public EstadoDTO buscarPorId(@PathVariable Long id) {
@@ -57,6 +59,7 @@ public class EstadoController implements EstadoControllerOpenApi {
 		return estadoDTOAssembler.toModel(estado);
 	}
 
+	@CheckSecurity.Estados.PodeEditar
 	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -66,6 +69,7 @@ public class EstadoController implements EstadoControllerOpenApi {
 	    return estadoDTOAssembler.toModel(estadoService.salvar(estado));
 	}
 
+	@CheckSecurity.Estados.PodeEditar
 	@Override
 	@PutMapping("/{id}")
 	public EstadoDTO atualizar(@RequestBody @Valid EstadoInput estadoInput, @PathVariable Long id) {
@@ -76,6 +80,7 @@ public class EstadoController implements EstadoControllerOpenApi {
 	    return estadoDTOAssembler.toModel(estadoService.salvar(estadoRetornado));
 	}
 
+	@CheckSecurity.Estados.PodeEditar
 	@Override
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Estado> deletar(@PathVariable Long id) {

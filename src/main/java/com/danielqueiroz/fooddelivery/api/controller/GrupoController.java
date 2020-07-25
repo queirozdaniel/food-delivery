@@ -23,6 +23,7 @@ import com.danielqueiroz.fooddelivery.api.model.assembler.GrupoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.GrupoInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.GrupoInput;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.GrupoControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Grupo;
 import com.danielqueiroz.fooddelivery.domain.service.GrupoService;
 
@@ -39,6 +40,7 @@ public class GrupoController implements GrupoControllerOpenApi {
     @Autowired
     private GrupoInputDisassembler grupoInputDisassembler;
     
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @Override
 	@GetMapping
     public CollectionModel<GrupoDTO> listar() {
@@ -47,6 +49,7 @@ public class GrupoController implements GrupoControllerOpenApi {
         return grupoDTOAssembler.toCollectionModel(todosGrupos);
     }
     
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @Override
 	@GetMapping("/{grupoId}")
     public GrupoDTO buscar(@PathVariable Long grupoId) {
@@ -55,6 +58,7 @@ public class GrupoController implements GrupoControllerOpenApi {
         return grupoDTOAssembler.toModel(grupo);
     }
     
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @Override
 	@PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -64,6 +68,7 @@ public class GrupoController implements GrupoControllerOpenApi {
         return grupoDTOAssembler.toModel(grupoService.salvar(grupo));
     }
     
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @Override
 	@PutMapping("/{grupoId}")
     public GrupoDTO atualizar(@PathVariable Long id,
@@ -75,6 +80,7 @@ public class GrupoController implements GrupoControllerOpenApi {
         return grupoDTOAssembler.toModel(grupoService.salvar(grupoAtual));
     }
     
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @Override
 	@DeleteMapping("/{grupoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

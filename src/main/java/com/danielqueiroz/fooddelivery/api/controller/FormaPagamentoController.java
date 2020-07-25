@@ -29,6 +29,7 @@ import com.danielqueiroz.fooddelivery.api.model.assembler.FormaPagamentoDTOAssem
 import com.danielqueiroz.fooddelivery.api.model.assembler.FormaPagamentoInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.FormaPagamentoInput;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.FormaPagamentoControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.FormaPagamento;
 import com.danielqueiroz.fooddelivery.domain.repository.FormaPagamentoRepository;
 import com.danielqueiroz.fooddelivery.domain.service.FormaPagamentoService;
@@ -49,6 +50,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 	@Autowired
 	private FormaPagamentoInputDisassembler formaPagamentoInputDisassembler;
 
+	@CheckSecurity.FormasPagamento.PodeConsultar
 	@Override
 	@GetMapping
 	public ResponseEntity<CollectionModel<FormaPagamentoDTO>> listar(ServletWebRequest request) {
@@ -73,6 +75,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 				.body(formasPagamentoDTO);
 	}
 
+	@CheckSecurity.FormasPagamento.PodeConsultar
 	@Override
 	@GetMapping("/{id}")
 	public ResponseEntity<FormaPagamentoDTO> buscar(@PathVariable Long id, ServletWebRequest request) {
@@ -98,6 +101,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 				.body(formaPagamentoDTO);
 	}
 
+	@CheckSecurity.FormasPagamento.PodeEditar
 	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -107,6 +111,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 		return formaPagamentoDTOAssembler.toModel(formaPagamentoService.salvar(formaPagamento));
 	}
 
+	@CheckSecurity.FormasPagamento.PodeEditar
 	@Override
 	@PutMapping("/{id}")
 	public FormaPagamentoDTO atualizar(@PathVariable Long id,
@@ -118,6 +123,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 		return formaPagamentoDTOAssembler.toModel(formaPagamentoService.salvar(formaPagamentoAtual));
 	}
 
+	@CheckSecurity.FormasPagamento.PodeEditar
 	@Override
 	@DeleteMapping("/{formaPagamentoId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)

@@ -17,6 +17,7 @@ import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.model.GrupoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.GrupoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.UsuarioGrupoControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Usuario;
 import com.danielqueiroz.fooddelivery.domain.service.UsuarioService;
 
@@ -33,6 +34,7 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
 	    @Autowired
 	    private CreateLinks createLinks; 
 	    
+	    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
 	    @Override
 		@GetMapping
 	    public CollectionModel<GrupoDTO> listar(@PathVariable Long usuarioId) {
@@ -50,6 +52,7 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
 	        return gruposDto;
 	    }
 	    
+	    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
 	    @Override
 		@DeleteMapping("/{grupoId}")
 	    @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -58,6 +61,7 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
 	        return ResponseEntity.noContent().build();
 	    }
 	    
+	    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
 	    @Override
 		@PutMapping("/{grupoId}")
 	    @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -17,6 +17,7 @@ import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.model.PermissaoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.PermissaoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.GrupoPermissaoControllerOpenApi;
+import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Grupo;
 import com.danielqueiroz.fooddelivery.domain.service.GrupoService;
 
@@ -33,6 +34,7 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
 	@Autowired
 	private CreateLinks createLinks;
 
+	@CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
 	@Override
 	@GetMapping
 	public CollectionModel<PermissaoDTO> listar(@PathVariable Long grupoId) {
@@ -50,6 +52,7 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
 		return permissoesDto;
 	}
 
+	@CheckSecurity.UsuariosGruposPermissoes.PodeEditar
 	@Override
 	@DeleteMapping("/{permissaoId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -58,6 +61,7 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
 		return ResponseEntity.noContent().build();
 	}
 
+	@CheckSecurity.UsuariosGruposPermissoes.PodeEditar
 	@Override
 	@PutMapping("/{permissaoId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
