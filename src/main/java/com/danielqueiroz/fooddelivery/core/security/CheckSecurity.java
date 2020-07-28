@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+//TODO: Refatorar metodos para ajudar na criação de Links no padrão HAL
 public @interface CheckSecurity {
 
 	
