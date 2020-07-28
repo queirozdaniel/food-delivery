@@ -51,16 +51,23 @@ import com.fasterxml.classmate.TypeResolver;
 
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.OAuthBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseMessageBuilder;
 import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.Contact;
+import springfox.documentation.service.GrantType;
+import springfox.documentation.service.ResourceOwnerPasswordCredentialsGrant;
 import springfox.documentation.service.ResponseMessage;
+import springfox.documentation.service.SecurityReference;
+import springfox.documentation.service.SecurityScheme;
 import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -101,6 +108,8 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 						AlternateTypeRules.newRule(typeResolver.resolve(CollectionModel.class, RestauranteBasicoDTO.class), RestaurantesBasicoModelOpenApi.class),
 						AlternateTypeRules.newRule(typeResolver.resolve(CollectionModel.class, UsuarioDTO.class), UsuariosModelOpenApi.class)
 						)
+				.securitySchemes(Arrays.asList(securityScheme()))
+				.securityContexts(Arrays.asList(securityContext()))
 				.tags(new Tag("Cidades", "Gerencia cidades"),
 				        new Tag("Grupos", "Gerencia os grupos de usuários"),
 				        new Tag("Cozinhas", "Gerencia as cozinhas"),
@@ -113,7 +122,35 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 				        new Tag("Estatísticas", "Estatísticas da FoodDelivery"),
 				        new Tag("Permissões", "Gerencia as permissões"));
 	}
+	
+	private SecurityScheme securityScheme() {
+		return new OAuthBuilder()
+				.name("FoodDelivery")
+				.grantTypes(grantTypes())
+				.scopes(scopes())
+				.build();
+	}
+	
+	private SecurityContext securityContext() {
+		var securityReference = SecurityReference.builder()
+				.reference("FoodDelivery")
+				.scopes(scopes().toArray(new AuthorizationScope[0]))
+				.build();
+		
+		return SecurityContext.builder()
+				.securityReferences(Arrays.asList(securityReference))
+				.forPaths(PathSelectors.any())
+				.build();
+	}
 
+	private List<GrantType> grantTypes(){
+		return Arrays.asList(new ResourceOwnerPasswordCredentialsGrant("/oauth/token"));
+	}
+	
+	private List<AuthorizationScope> scopes(){
+		return Arrays.asList(new AuthorizationScope("READ", "Acesso de leitura"),new AuthorizationScope("WRITE", "Acesso de escrita"));
+	}
+	
 	private List<ResponseMessage> globalResponseMessages() {
 		return Arrays.asList(
 				new ResponseMessageBuilder().code(HttpStatus.INTERNAL_SERVER_ERROR.value())
