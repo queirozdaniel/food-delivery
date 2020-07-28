@@ -50,14 +50,14 @@ public @interface CheckSecurity {
 		
 		@PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
 		@PostAuthorize("hasAuthority('CONSULTAR_PEDIDOS') or "
-				+ "@userSecurity.getUsuarioId() == returnObject.cliente.id or "
+				+ "@userSecurity.usuarioAutenticadoIgual(returnObject.cliente.id) or "
 				+ "@userSecurity.gerenciaRestaurante(returnObject.restaurante.id)")
 		@Retention(RUNTIME)
 		@Target(METHOD)
 		public @interface PodeBuscar { }
 		
 		@PreAuthorize("hasAuthority('SCOPE_READ') and (hasAuthority('CONSULTAR_PEDIDOS') or " 
-				+ "@userSecurity.getUsuarioId() == #filtro.clienteId or"
+				+ "@userSecurity.usuarioAutenticadoIgual(#filtro.clienteId) or"
 				+ "@userSecurity.gerenciaRestaurante(#filtro.restauranteId))")
 		@Retention(RUNTIME)
 		@Target(METHOD)
@@ -68,8 +68,7 @@ public @interface CheckSecurity {
 		@Target(METHOD)
 		public @interface PodeCriar { }
 
-		@PreAuthorize("hasAuthority('SCOPE_WRITE') and (hasAuthority('GERENCIAR_PEDIDOS') or "
-				+ "@algaSecurity.gerenciaRestauranteDoPedido(#codigoPedido))")
+		@PreAuthorize("@algaSecurity.podeGerenciarPedidos(#codigoPedido)")
 		@Retention(RUNTIME)
 		@Target(METHOD)
 		public @interface PodeGerenciarPedidos {
@@ -121,13 +120,13 @@ public @interface CheckSecurity {
 	public @interface UsuariosGruposPermissoes {
 
 	    @PreAuthorize("hasAuthority('SCOPE_WRITE') and "
-	            + "@algaSecurity.getUsuarioId() == #usuarioId")
+	            + "@algaSecurity.usuarioAutenticadoIgual(#usuarioId) ")
 	    @Retention(RUNTIME)
 	    @Target(METHOD)
 	    public @interface PodeAlterarPropriaSenha { }
 	    
 	    @PreAuthorize("hasAuthority('SCOPE_WRITE') and (hasAuthority('EDITAR_USUARIOS_GRUPOS_PERMISSOES') or "
-	            + "@algaSecurity.getUsuarioId() == #usuarioId)")
+	            + "@algaSecurity.usuarioAutenticadoIgual(#usuarioId))")
 	    @Retention(RUNTIME)
 	    @Target(METHOD)
 	    public @interface PodeAlterarUsuario { }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.controller.PedidoController;
 import com.danielqueiroz.fooddelivery.api.model.PedidoDTO;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Pedido;
 
 @Component
@@ -19,6 +20,9 @@ public class PedidoDTOAssembler extends RepresentationModelAssemblerSupport<Pedi
 	@Autowired
 	private CreateLinks pedidoLinks;
 
+	@Autowired
+	private UserSecurity userSecurity;
+	
 	public PedidoDTOAssembler() {
 		super(PedidoController.class, PedidoDTO.class);
 	}
@@ -42,19 +46,21 @@ public class PedidoDTOAssembler extends RepresentationModelAssemblerSupport<Pedi
 		pedidoDto.getEnderecoEntrega().getCidade()
 				.add(pedidoLinks.linkToCidade(pedido.getEnderecoEntrega().getCidade().getId()));
 
+		if (userSecurity.podeGerenciarPedidos(pedidoDto.getCodigo())) {
+			if (pedido.podeSerConfirmado()) {
+				pedidoDto.add(pedidoLinks.linkToConfirmacaoPedido(pedido.getCodigo(), "confirmar"));
+			}
+			
+			if (pedido.podeSerCancelado()) {
+				pedidoDto.add(pedidoLinks.linkToCancelamentoPedido(pedido.getCodigo(), "cancelar"));
+			}
+			
+			
+			if (pedido.podeSerEntregue()) {
+				pedidoDto.add(pedidoLinks.linkToEntregaPedido(pedido.getCodigo(), "entregar"));
+			}
+		}
 		
-		if (pedido.podeSerConfirmado()) {
-			pedidoDto.add(pedidoLinks.linkToConfirmacaoPedido(pedido.getCodigo(), "confirmar"));
-		}
-
-		if (pedido.podeSerCancelado()) {
-			pedidoDto.add(pedidoLinks.linkToCancelamentoPedido(pedido.getCodigo(), "cancelar"));
-		}
-
-		
-		if (pedido.podeSerEntregue()) {
-			pedidoDto.add(pedidoLinks.linkToEntregaPedido(pedido.getCodigo(), "entregar"));
-		}
 
 		pedidoDto.getItens().forEach(item -> {
 			item.add(pedidoLinks.linkToProduto(
