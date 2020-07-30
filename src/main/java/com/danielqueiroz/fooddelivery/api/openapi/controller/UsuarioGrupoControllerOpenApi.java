@@ -19,7 +19,7 @@ public interface UsuarioGrupoControllerOpenApi {
     @ApiResponses({
         @ApiResponse(code = 404, message = "Usuário não encontrado", response = Problem.class)
     })
-	CollectionModel<GrupoDTO> listar(@ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId);
+	CollectionModel<GrupoDTO> buscarTodos(@ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId);
 
 	 @ApiOperation("Desassociação de grupo com usuário")
 	    @ApiResponses({

@@ -52,7 +52,7 @@ public class FotoService {
 	}
 	
 	@Transactional
-	public void excluir(Long restauranteId, Long produtoId) {
+	public void deletar(Long restauranteId, Long produtoId) {
 	    FotoProduto foto = buscarPorId(restauranteId, produtoId);
 	    
 	    produtoRepository.delete(foto);

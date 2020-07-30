@@ -55,7 +55,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 	@CheckSecurity.Cozinhas.PodeConsultar
 	@Override
 	@GetMapping
-	public PagedModel<CozinhaDTO> listarTodas(@PageableDefault(size = 10) Pageable pageable) {
+	public PagedModel<CozinhaDTO> buscarTodos(@PageableDefault(size = 10) Pageable pageable) {
 		log.info("Consulta de cozinhas com páginas de {} registros...", pageable.getPageSize());
 		
 		Page<Cozinha> cozinhasPages = cozinhaService.buscarTodos(pageable);

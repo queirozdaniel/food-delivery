@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.EstatisticasControllerOpenApi;
+import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.filter.VendaDiariaFilter;
 import com.danielqueiroz.fooddelivery.domain.model.VendaDiaria;

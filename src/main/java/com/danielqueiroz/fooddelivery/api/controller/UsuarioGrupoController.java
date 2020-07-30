@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.model.GrupoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.GrupoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.UsuarioGrupoControllerOpenApi;
+import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Usuario;
 import com.danielqueiroz.fooddelivery.domain.service.UsuarioService;
@@ -37,7 +37,7 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
 	    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
 	    @Override
 		@GetMapping
-	    public CollectionModel<GrupoDTO> listar(@PathVariable Long usuarioId) {
+	    public CollectionModel<GrupoDTO> buscarTodos(@PathVariable Long usuarioId) {
 	        Usuario usuario = usuarioService.buscarPorId(usuarioId);
 	        
 	        CollectionModel<GrupoDTO> gruposDto = grupoDTOAssembler.toCollectionModel(usuario.getGrupos())

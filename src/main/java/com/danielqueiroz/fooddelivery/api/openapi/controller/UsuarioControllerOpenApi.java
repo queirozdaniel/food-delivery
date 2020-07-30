@@ -18,7 +18,7 @@ import io.swagger.annotations.ApiResponses;
 public interface UsuarioControllerOpenApi {
 
 	@ApiOperation("Lista todos os usuários")
-	CollectionModel<UsuarioDTO> listar();
+	CollectionModel<UsuarioDTO> buscarTodos();
 
 	@ApiOperation("Busca um usuário por ID")
     @ApiResponses({

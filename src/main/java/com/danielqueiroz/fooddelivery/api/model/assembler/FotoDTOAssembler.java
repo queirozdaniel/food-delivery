@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.controller.RestauranteProdutoFotoController;
 import com.danielqueiroz.fooddelivery.api.model.FotoProdutoDTO;
+import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.domain.model.FotoProduto;
 
 @Component

@@ -1,4 +1,4 @@
-package com.danielqueiroz.fooddelivery.api;
+package com.danielqueiroz.fooddelivery.api.utils;
 
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
@@ -89,7 +89,7 @@ public class CreateLinks {
 	}
 
 	public Link linkToGruposUsuario(Long usuarioId, String rel) {
-		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioGrupoController.class).listar(usuarioId))
+		return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioGrupoController.class).buscarTodos(usuarioId))
 				.withRel(rel);
 	}
 
@@ -99,7 +99,7 @@ public class CreateLinks {
 
 	public Link linkToResponsaveisRestaurante(Long restauranteId, String rel) {
 		return WebMvcLinkBuilder
-				.linkTo(WebMvcLinkBuilder.methodOn(RestauranteUsuarioResponsavelController.class).listar(restauranteId))
+				.linkTo(WebMvcLinkBuilder.methodOn(RestauranteUsuarioResponsavelController.class).buscarTodos(restauranteId))
 				.withRel(rel);
 	}
 
@@ -109,7 +109,7 @@ public class CreateLinks {
 
 	public Link linkToFormaPagamento(Long formaPagamentoId, String rel) {
 		return WebMvcLinkBuilder
-				.linkTo(WebMvcLinkBuilder.methodOn(FormaPagamentoController.class).buscar(formaPagamentoId, null))
+				.linkTo(WebMvcLinkBuilder.methodOn(FormaPagamentoController.class).buscarPorId(formaPagamentoId, null))
 				.withRel(rel);
 	}
 
@@ -171,7 +171,7 @@ public class CreateLinks {
 	public Link linkToProdutos(Long restauranteId, String rel) {
 	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
 	    		.methodOn(RestauranteProdutoController.class)
-	            .listar(restauranteId, null)).withRel(rel);
+	            .buscarTodos(restauranteId, null)).withRel(rel);
 	}
 
 	public Link linkToProdutos(Long restauranteId) {
@@ -228,7 +228,7 @@ public class CreateLinks {
 
 	public Link linkToRestauranteFormasPagamento(Long restauranteId, String rel) {
 		return WebMvcLinkBuilder
-				.linkTo(WebMvcLinkBuilder.methodOn(RestauranteFormaPagamentoController.class).listar(restauranteId))
+				.linkTo(WebMvcLinkBuilder.methodOn(RestauranteFormaPagamentoController.class).buscarTodos(restauranteId))
 				.withRel(rel);
 	}
 
@@ -284,7 +284,7 @@ public class CreateLinks {
 	public Link linkToGrupoPermissoes(Long grupoId, String rel) {
 	    return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
 	    		.methodOn(GrupoPermissaoController.class)
-	            .listar(grupoId)).withRel(rel);
+	            .buscarTodos(grupoId)).withRel(rel);
 	}  
 
 	public Link linkToPermissoes(String rel) {

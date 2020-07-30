@@ -6,9 +6,9 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.controller.UsuarioController;
 import com.danielqueiroz.fooddelivery.api.model.UsuarioDTO;
+import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.domain.model.Usuario;
 
 @Component
@@ -18,7 +18,7 @@ public class UsuarioDTOAssembler extends RepresentationModelAssemblerSupport<Usu
 	private ModelMapper modelMapper;
 	
 	@Autowired
-	private CreateLinks usuarioLinks;
+	private CreateLinks createLinks;
 	
 	public UsuarioDTOAssembler() {
 		super(UsuarioController.class, UsuarioDTO.class);
@@ -30,9 +30,9 @@ public class UsuarioDTOAssembler extends RepresentationModelAssemblerSupport<Usu
     	UsuarioDTO usuarioDto = createModelWithId(usuario.getId(),usuario);
     	modelMapper.map(usuario, usuarioDto);
     	
-    	usuarioDto.add(usuarioLinks.linkToUsuarios("usuarios"));
+    	usuarioDto.add(createLinks.linkToUsuarios("usuarios"));
     	
-    	usuarioDto.add(usuarioLinks.linkToGruposUsuario(usuario.getId(), "grupos-usuario"));
+    	usuarioDto.add(createLinks.linkToGruposUsuario(usuario.getId(), "grupos-usuario"));
         
     			
     	return usuarioDto;
@@ -41,7 +41,7 @@ public class UsuarioDTOAssembler extends RepresentationModelAssemblerSupport<Usu
     @Override
     public CollectionModel<UsuarioDTO> toCollectionModel(Iterable<? extends Usuario> entities) {
         return super.toCollectionModel(entities)
-            .add(usuarioLinks.linkToUsuarios());
+            .add(createLinks.linkToUsuarios());
     }  
     
 }

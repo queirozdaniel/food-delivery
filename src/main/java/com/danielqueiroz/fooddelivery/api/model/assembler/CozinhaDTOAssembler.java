@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.controller.CozinhaController;
 import com.danielqueiroz.fooddelivery.api.model.CozinhaDTO;
+import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.domain.model.Cozinha;
 
 @Component
@@ -17,7 +17,7 @@ public class CozinhaDTOAssembler extends RepresentationModelAssemblerSupport<Coz
 	private ModelMapper modelMapper;
 	
 	@Autowired
-	private CreateLinks cozinhaLinks;
+	private CreateLinks createLinks;
 
 	public CozinhaDTOAssembler() {
 		super(CozinhaController.class, CozinhaDTO.class);
@@ -27,7 +27,7 @@ public class CozinhaDTOAssembler extends RepresentationModelAssemblerSupport<Coz
 		CozinhaDTO cozinhaDto = createModelWithId(cozinha.getId(), cozinha);
 		modelMapper.map(cozinha, cozinhaDto);
 
-		cozinhaDto.add(cozinhaLinks.linkToCozinhas("cozinhas"));
+		cozinhaDto.add(createLinks.linkToCozinhas("cozinhas"));
 		
         return cozinhaDto;
     }

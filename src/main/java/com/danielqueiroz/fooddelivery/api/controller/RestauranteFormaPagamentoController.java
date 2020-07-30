@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.model.FormaPagamentoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.FormaPagamentoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.RestauranteFormaPagamentoControllerOpenApi;
+import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 import com.danielqueiroz.fooddelivery.domain.service.RestauranteService;
@@ -37,7 +37,7 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
 	@CheckSecurity.Restaurantes.PodeConsultar
 	@Override
 	@GetMapping
-	public CollectionModel<FormaPagamentoDTO> listar(@PathVariable Long restauranteId){
+	public CollectionModel<FormaPagamentoDTO> buscarTodos(@PathVariable Long restauranteId){
 		Restaurante restaurantes = restauranteService.buscarPorId(restauranteId);
 
 		CollectionModel<FormaPagamentoDTO> formasPagamentoDto = formaPagamentoDtoAssembler.toCollectionModel(restaurantes.getFormasPagamento())

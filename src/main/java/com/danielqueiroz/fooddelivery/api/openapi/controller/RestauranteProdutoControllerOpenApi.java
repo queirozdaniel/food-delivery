@@ -20,7 +20,7 @@ public interface RestauranteProdutoControllerOpenApi {
 		@ApiResponse(code = 400, message = "ID do restaurante inválido", response = Problem.class),
 		@ApiResponse(code = 404, message = "Restaurante não encontrado", response = Problem.class)
 	})
-	CollectionModel<ProdutoDTO> listar(@ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId, 
+	CollectionModel<ProdutoDTO> buscarTodos(@ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId, 
 			@ApiParam(value = "Indica se deve ou não incluir produtos inativos no resultado da listagem", 
 			example = "false", defaultValue = "false") Boolean incluirInativos);
 

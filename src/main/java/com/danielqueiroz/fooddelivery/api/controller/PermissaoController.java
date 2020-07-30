@@ -29,7 +29,7 @@ public class PermissaoController implements PermissaoControllerOpenApi {
     @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
 	@Override
 	@GetMapping
-	public CollectionModel<PermissaoDTO> listar() {
+	public CollectionModel<PermissaoDTO> buscarTodos() {
 		List<Permissao> todasPermissoes = permissaoRepository.findAll();
         
         return permissaoDTOAssembler.toCollectionModel(todasPermissoes);

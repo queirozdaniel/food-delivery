@@ -6,9 +6,9 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.controller.EstadoController;
 import com.danielqueiroz.fooddelivery.api.model.EstadoDTO;
+import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.domain.model.Estado;
 
 @Component
@@ -18,7 +18,7 @@ public class EstadoDTOAssembler extends RepresentationModelAssemblerSupport<Esta
 	private ModelMapper modelMapper;
 
 	@Autowired
-	private CreateLinks estadoLinks;
+	private CreateLinks createLinks;
 
 	public EstadoDTOAssembler() {
 		super(EstadoController.class, EstadoDTO.class);
@@ -29,7 +29,7 @@ public class EstadoDTOAssembler extends RepresentationModelAssemblerSupport<Esta
 		EstadoDTO estadoDto = createModelWithId(estado.getId(), estado);
         modelMapper.map(estado, estadoDto);
         
-        estadoDto.add(estadoLinks.linkToEstados("estados"));
+        estadoDto.add(createLinks.linkToEstados("estados"));
         
         return estadoDto;
     }
@@ -37,6 +37,6 @@ public class EstadoDTOAssembler extends RepresentationModelAssemblerSupport<Esta
     @Override
     public CollectionModel<EstadoDTO> toCollectionModel(Iterable<? extends Estado> entities) {
         return super.toCollectionModel(entities)
-            .add(estadoLinks.linkToEstados());
+            .add(createLinks.linkToEstados());
     } 
 }

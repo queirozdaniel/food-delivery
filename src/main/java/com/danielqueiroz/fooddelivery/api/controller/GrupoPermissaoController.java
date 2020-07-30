@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.model.PermissaoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.PermissaoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.GrupoPermissaoControllerOpenApi;
+import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Grupo;
 import com.danielqueiroz.fooddelivery.domain.service.GrupoService;
@@ -37,7 +37,7 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
 	@CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
 	@Override
 	@GetMapping
-	public CollectionModel<PermissaoDTO> listar(@PathVariable Long grupoId) {
+	public CollectionModel<PermissaoDTO> buscarTodos(@PathVariable Long grupoId) {
 		Grupo grupo = grupoService.buscarPorId(grupoId);
 
 		CollectionModel<PermissaoDTO> permissoesDto = permissaoDTOAssembler.toCollectionModel(grupo.getPermissoes())

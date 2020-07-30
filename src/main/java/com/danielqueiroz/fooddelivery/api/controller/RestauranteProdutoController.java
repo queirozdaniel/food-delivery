@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.model.ProdutoDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.ProdutoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.model.assembler.ProdutoInputDisassembler;
 import com.danielqueiroz.fooddelivery.api.model.input.ProdutoInput;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.RestauranteProdutoControllerOpenApi;
+import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Produto;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
@@ -56,7 +56,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 	    @CheckSecurity.Restaurantes.PodeConsultar
 	    @Override
 		@GetMapping
-	    public CollectionModel<ProdutoDTO> listar(@PathVariable Long restauranteId, @RequestParam(required = false) Boolean incluirInativos) {
+	    public CollectionModel<ProdutoDTO> buscarTodos(@PathVariable Long restauranteId, @RequestParam(required = false) Boolean incluirInativos) {
 	        Restaurante restaurante = restauranteService.buscarPorId(restauranteId);
 	        
 	        List<Produto> todosProdutos = null;

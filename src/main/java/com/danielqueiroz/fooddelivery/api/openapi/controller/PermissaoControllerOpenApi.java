@@ -11,6 +11,6 @@ import io.swagger.annotations.ApiOperation;
 public interface PermissaoControllerOpenApi {
 
 	@ApiOperation("Lista as permissões")
-    CollectionModel<PermissaoDTO> listar();
+    CollectionModel<PermissaoDTO> buscarTodos();
 	
 }

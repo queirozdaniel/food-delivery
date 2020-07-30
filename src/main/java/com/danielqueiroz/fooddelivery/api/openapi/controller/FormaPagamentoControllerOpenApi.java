@@ -19,14 +19,14 @@ import io.swagger.annotations.ApiResponses;
 public interface FormaPagamentoControllerOpenApi {
 
 	@ApiOperation(value = "Lista as formas de pagamento", response = FormasPagamentoModelOpenApi.class)
-	ResponseEntity<CollectionModel<FormaPagamentoDTO>> listar(ServletWebRequest request);
+	ResponseEntity<CollectionModel<FormaPagamentoDTO>> buscarTodos(ServletWebRequest request);
 
 	@ApiOperation("Busca uma forma de pagamento por ID")
 	@ApiResponses({
 		@ApiResponse(code = 400, message = "ID da forma de pagamento inválido", response = Problem.class),
 		@ApiResponse(code = 404, message = "Forma de pagamento não encontrada", response = Problem.class)
 	})
-	ResponseEntity<FormaPagamentoDTO> buscar(@ApiParam(value = "ID de uma forma de pagamento", example = "1", required = true) Long id, ServletWebRequest request);
+	ResponseEntity<FormaPagamentoDTO> buscarPorId(@ApiParam(value = "ID de uma forma de pagamento", example = "1", required = true) Long id, ServletWebRequest request);
 
 	@ApiOperation("Cadastra uma forma de pagamento")
 	FormaPagamentoDTO adicionar(@ApiParam(name = "corpo", value = "Representação de uma Forma de Pagamento", 
@@ -44,6 +44,6 @@ public interface FormaPagamentoControllerOpenApi {
 	@ApiResponses({
 		@ApiResponse(code = 404, message = "Forma de pagamento não encontrada", response = Problem.class)
 	})
-	void remover(@ApiParam(value = "ID de uma forma de pagamento", example = "1", required = true) Long formaPagamentoId);
+	void deletar(@ApiParam(value = "ID de uma forma de pagamento", example = "1", required = true) Long id);
 
 }

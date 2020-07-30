@@ -43,7 +43,7 @@ public class GrupoController implements GrupoControllerOpenApi {
     @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @Override
 	@GetMapping
-    public CollectionModel<GrupoDTO> listar() {
+    public CollectionModel<GrupoDTO> buscarTodos() {
         List<Grupo> todosGrupos = grupoService.buscarTodos();
         
         return grupoDTOAssembler.toCollectionModel(todosGrupos);
@@ -51,9 +51,9 @@ public class GrupoController implements GrupoControllerOpenApi {
     
     @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @Override
-	@GetMapping("/{grupoId}")
-    public GrupoDTO buscar(@PathVariable Long grupoId) {
-        Grupo grupo = grupoService.buscarPorId(grupoId);
+	@GetMapping("/{id}")
+    public GrupoDTO buscarPorId(@PathVariable Long id) {
+        Grupo grupo = grupoService.buscarPorId(id);
         
         return grupoDTOAssembler.toModel(grupo);
     }
@@ -70,7 +70,7 @@ public class GrupoController implements GrupoControllerOpenApi {
     
     @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @Override
-	@PutMapping("/{grupoId}")
+	@PutMapping("/{id}")
     public GrupoDTO atualizar(@PathVariable Long id,
             @RequestBody @Valid GrupoInput grupoInput) {
         Grupo grupoAtual = grupoService.buscarPorId(id);
@@ -82,9 +82,9 @@ public class GrupoController implements GrupoControllerOpenApi {
     
     @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @Override
-	@DeleteMapping("/{grupoId}")
+	@DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void remover(@PathVariable Long id) {
+    public void deletar(@PathVariable Long id) {
         grupoService.deletar(id);	
     }  
 	

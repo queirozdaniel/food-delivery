@@ -53,7 +53,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 	@CheckSecurity.FormasPagamento.PodeConsultar
 	@Override
 	@GetMapping
-	public ResponseEntity<CollectionModel<FormaPagamentoDTO>> listar(ServletWebRequest request) {
+	public ResponseEntity<CollectionModel<FormaPagamentoDTO>> buscarTodos(ServletWebRequest request) {
 		ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
 
 		String eTag = "0";
@@ -78,7 +78,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 	@CheckSecurity.FormasPagamento.PodeConsultar
 	@Override
 	@GetMapping("/{id}")
-	public ResponseEntity<FormaPagamentoDTO> buscar(@PathVariable Long id, ServletWebRequest request) {
+	public ResponseEntity<FormaPagamentoDTO> buscarPorId(@PathVariable Long id, ServletWebRequest request) {
 
 		ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
 
@@ -125,10 +125,10 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 
 	@CheckSecurity.FormasPagamento.PodeEditar
 	@Override
-	@DeleteMapping("/{formaPagamentoId}")
+	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void remover(@PathVariable Long formaPagamentoId) {
-		formaPagamentoService.deletar(formaPagamentoId);
+	public void deletar(@PathVariable Long id) {
+		formaPagamentoService.deletar(id);
 	}
 
 }

@@ -117,7 +117,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void excluir(@PathVariable Long restauranteId, 
 	        @PathVariable Long produtoId) {
-		fotoService.excluir(restauranteId, produtoId);
+		fotoService.deletar(restauranteId, produtoId);
 	}  
 
 	private void verificarCompatibilidadeMediaType(MediaType mediaTypeFoto, List<MediaType> mediaTypesAceitas) throws HttpMediaTypeNotAcceptableException {

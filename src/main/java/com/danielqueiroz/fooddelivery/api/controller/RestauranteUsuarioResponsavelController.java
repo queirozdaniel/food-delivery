@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.model.UsuarioDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.UsuarioDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.RestauranteUsuarioResponsavelControllerOpenApi;
+import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 import com.danielqueiroz.fooddelivery.domain.service.RestauranteService;
 
@@ -35,7 +35,7 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
 
 	@Override
 	@GetMapping
-	public CollectionModel<UsuarioDTO> listar(@PathVariable Long restauranteId) {
+	public CollectionModel<UsuarioDTO> buscarTodos(@PathVariable Long restauranteId) {
 		Restaurante restaurante = restauranteService.buscarPorId(restauranteId);
 
 		CollectionModel<UsuarioDTO> usuariosDto = usuarioDTOAssembler.toCollectionModel(restaurante.getResponsaveis())

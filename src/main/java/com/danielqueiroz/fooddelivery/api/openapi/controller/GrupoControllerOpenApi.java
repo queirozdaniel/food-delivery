@@ -16,14 +16,14 @@ import io.swagger.annotations.ApiResponses;
 public interface GrupoControllerOpenApi {
 
 	@ApiOperation("Lista os grupos")
-	CollectionModel<GrupoDTO> listar();
+	CollectionModel<GrupoDTO> buscarTodos();
 
 	@ApiOperation("Busca um grupo por ID")
 	@ApiResponses({
 		@ApiResponse(code = 400, message = "ID da grupo inválido", response = Problem.class),
 		@ApiResponse(code = 404, message = "Grupo não encontrado", response = Problem.class)
 	})
-	GrupoDTO buscar(@ApiParam(value = "ID de um grupo", example = "1", required = true) Long id);
+	GrupoDTO buscarPorId(@ApiParam(value = "ID de um grupo", example = "1", required = true) Long id);
 
 	@ApiOperation("Cadastra um grupo")
 	GrupoDTO adicionar(@ApiParam(name = "corpo", value = "Representação de um grupo", 
@@ -41,6 +41,6 @@ public interface GrupoControllerOpenApi {
 	@ApiResponses({
 		@ApiResponse(code = 404, message = "Grupo não encontrado", response = Problem.class)
 	})
-	void remover(@ApiParam(value = "ID de um grupo", example = "1", required = true) Long id);
+	void deletar(@ApiParam(value = "ID de um grupo", example = "1", required = true) Long id);
 
 }

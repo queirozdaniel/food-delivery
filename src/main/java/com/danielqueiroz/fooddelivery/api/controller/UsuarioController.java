@@ -48,7 +48,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @Override
 	@GetMapping
-    public CollectionModel<UsuarioDTO> listar() {
+    public CollectionModel<UsuarioDTO> buscarTodos() {
         List<Usuario> todasUsuarios = usuarioRepository.findAll();
         
         return usuarioDTOAssembler.toCollectionModel(todasUsuarios);

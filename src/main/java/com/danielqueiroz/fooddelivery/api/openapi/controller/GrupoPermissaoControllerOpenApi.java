@@ -20,7 +20,7 @@ public interface GrupoPermissaoControllerOpenApi {
         @ApiResponse(code = 400, message = "ID do grupo inválido", response = Problem.class),
         @ApiResponse(code = 404, message = "Grupo não encontrado", response = Problem.class)
     })
-	CollectionModel<PermissaoDTO> listar(
+	CollectionModel<PermissaoDTO> buscarTodos(
 			@ApiParam(value = "ID do grupo", example = "1", required = true) Long grupoId);
 
 	@ApiOperation("Desassociação de permissão com grupo")

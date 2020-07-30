@@ -31,7 +31,6 @@ public class UsuarioService {
     	
     	Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(usuario.getEmail());
     	
-    	
     	if (usuarioExistente.isPresent() && !usuarioExistente.get().equals(usuario)) {
 			throw new NegocioException(String.format("já existe um usuário cadastrado com o email: %s", usuario.getEmail()));
 		}

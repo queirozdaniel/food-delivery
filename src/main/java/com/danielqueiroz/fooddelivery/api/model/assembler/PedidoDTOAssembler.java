@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.controller.PedidoController;
 import com.danielqueiroz.fooddelivery.api.model.PedidoDTO;
+import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Pedido;
 
@@ -18,7 +18,7 @@ public class PedidoDTOAssembler extends RepresentationModelAssemblerSupport<Pedi
 	private ModelMapper modelMapper;
 	
 	@Autowired
-	private CreateLinks pedidoLinks;
+	private CreateLinks createLinks;
 
 	@Autowired
 	private UserSecurity userSecurity;
@@ -32,38 +32,38 @@ public class PedidoDTOAssembler extends RepresentationModelAssemblerSupport<Pedi
 		PedidoDTO pedidoDto = createModelWithId(pedido.getCodigo(), pedido);
 		modelMapper.map(pedido, pedidoDto);
 
-		pedidoDto.add(pedidoLinks.linksToPedidos("pedidos"));
+		pedidoDto.add(createLinks.linksToPedidos("pedidos"));
 		
-		pedidoDto.getRestaurante().add(pedidoLinks.linkToRestaurante(pedido.getRestaurante().getId()));
+		pedidoDto.getRestaurante().add(createLinks.linkToRestaurante(pedido.getRestaurante().getId()));
 		
 
 		pedidoDto.getCliente()
-				.add(pedidoLinks.linkToUsuario(pedido.getCliente().getId()));
+				.add(createLinks.linkToUsuario(pedido.getCliente().getId()));
 
 		pedidoDto.getFormaPagamento()
-				.add(pedidoLinks.linkToFormaPagamento(pedido.getFormaPagamento().getId()));
+				.add(createLinks.linkToFormaPagamento(pedido.getFormaPagamento().getId()));
 
 		pedidoDto.getEnderecoEntrega().getCidade()
-				.add(pedidoLinks.linkToCidade(pedido.getEnderecoEntrega().getCidade().getId()));
+				.add(createLinks.linkToCidade(pedido.getEnderecoEntrega().getCidade().getId()));
 
 		if (userSecurity.podeGerenciarPedidos(pedidoDto.getCodigo())) {
 			if (pedido.podeSerConfirmado()) {
-				pedidoDto.add(pedidoLinks.linkToConfirmacaoPedido(pedido.getCodigo(), "confirmar"));
+				pedidoDto.add(createLinks.linkToConfirmacaoPedido(pedido.getCodigo(), "confirmar"));
 			}
 			
 			if (pedido.podeSerCancelado()) {
-				pedidoDto.add(pedidoLinks.linkToCancelamentoPedido(pedido.getCodigo(), "cancelar"));
+				pedidoDto.add(createLinks.linkToCancelamentoPedido(pedido.getCodigo(), "cancelar"));
 			}
 			
 			
 			if (pedido.podeSerEntregue()) {
-				pedidoDto.add(pedidoLinks.linkToEntregaPedido(pedido.getCodigo(), "entregar"));
+				pedidoDto.add(createLinks.linkToEntregaPedido(pedido.getCodigo(), "entregar"));
 			}
 		}
 		
 
 		pedidoDto.getItens().forEach(item -> {
-			item.add(pedidoLinks.linkToProduto(
+			item.add(createLinks.linkToProduto(
 	                pedido.getRestaurante().getId(), item.getProdutoId(), "produto"));
 		});
 

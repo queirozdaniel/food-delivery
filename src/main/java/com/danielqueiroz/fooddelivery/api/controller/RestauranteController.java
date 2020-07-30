@@ -90,10 +90,10 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 
 	@CheckSecurity.Restaurantes.PodeEditarEGerenciar
 	@Override
-	@PutMapping("/{restauranteId}")
-	public RestauranteDTO atualizar(@RequestBody @Valid RestauranteInput restauranteInput, @PathVariable Long restauranteId) {
+	@PutMapping("/{id}")
+	public RestauranteDTO atualizar(@RequestBody @Valid RestauranteInput restauranteInput, @PathVariable Long id) {
 
-		Restaurante restauranteRetornado = restauranteService.buscarPorId(restauranteId);
+		Restaurante restauranteRetornado = restauranteService.buscarPorId(id);
 
 		restauranteInputDisassembler.copyToDomainObject(restauranteInput, restauranteRetornado);
 
@@ -156,20 +156,20 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 
 	@CheckSecurity.Restaurantes.PodeEditarEGerenciar
 	@Override
-	@PutMapping("/{restauranteId}/abertura")
+	@PutMapping("/{id}/abertura")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public ResponseEntity<Void> abrir(@PathVariable Long restauranteId) {
-		restauranteService.abrir(restauranteId);
+	public ResponseEntity<Void> abrir(@PathVariable Long id) {
+		restauranteService.abrir(id);
 		
 		return ResponseEntity.noContent().build();
 	}
 
 	@CheckSecurity.Restaurantes.PodeEditarEGerenciar
 	@Override
-	@PutMapping("/{restauranteId}/fechamento")
+	@PutMapping("/{id}/fechamento")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public ResponseEntity<Void> fechar(@PathVariable Long restauranteId) {
-		restauranteService.fechar(restauranteId);
+	public ResponseEntity<Void> fechar(@PathVariable Long id) {
+		restauranteService.fechar(id);
 		
 		return ResponseEntity.noContent().build();
 	}

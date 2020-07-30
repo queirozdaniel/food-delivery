@@ -6,9 +6,9 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import com.danielqueiroz.fooddelivery.api.CreateLinks;
 import com.danielqueiroz.fooddelivery.api.controller.CidadeController;
 import com.danielqueiroz.fooddelivery.api.model.CidadeDTO;
+import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.domain.model.Cidade;
 
 @Component
@@ -18,7 +18,7 @@ public class CidadeDTOAssembler extends RepresentationModelAssemblerSupport<Cida
 	private ModelMapper modelMapper;
 	
 	@Autowired
-	private CreateLinks cidadeLinks;
+	private CreateLinks createLinks;
 
 	public CidadeDTOAssembler() {
 		super(CidadeController.class, CidadeDTO.class);
@@ -29,9 +29,9 @@ public class CidadeDTOAssembler extends RepresentationModelAssemblerSupport<Cida
 		CidadeDTO cidadeDto  = createModelWithId(cidade.getId(), cidade);
 		modelMapper.map(cidade, cidadeDto);
 		
-		cidadeDto.add(cidadeLinks.linkToCidades("cidades"));
+		cidadeDto.add(createLinks.linkToCidades("cidades"));
 		
-		cidadeDto.getEstado().add(cidadeLinks.linkToEstado(cidade.getEstado().getId()));
+		cidadeDto.getEstado().add(createLinks.linkToEstado(cidade.getEstado().getId()));
 		
         return cidadeDto;
     }
@@ -39,7 +39,7 @@ public class CidadeDTOAssembler extends RepresentationModelAssemblerSupport<Cida
 	
 	@Override
 	public CollectionModel<CidadeDTO> toCollectionModel(Iterable<? extends Cidade> entities) {
-		return super.toCollectionModel(entities).add(cidadeLinks.linkToCidades());
+		return super.toCollectionModel(entities).add(createLinks.linkToCidades());
 	}
 	
 }

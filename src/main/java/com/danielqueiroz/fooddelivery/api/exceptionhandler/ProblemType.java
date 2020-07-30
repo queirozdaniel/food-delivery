@@ -20,7 +20,7 @@ public enum ProblemType {
 	
 	private ProblemType(String path, String title) {
 		this.title = title;
-		this.path = "http://localhost:8080" + path;
+		this.path = "https://api.fooddelivery.com.br" + path;
 	}
 	
 }
