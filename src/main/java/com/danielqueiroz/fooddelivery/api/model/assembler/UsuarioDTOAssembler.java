@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.danielqueiroz.fooddelivery.api.controller.UsuarioController;
 import com.danielqueiroz.fooddelivery.api.model.UsuarioDTO;
 import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Usuario;
 
 @Component
@@ -20,6 +21,9 @@ public class UsuarioDTOAssembler extends RepresentationModelAssemblerSupport<Usu
 	@Autowired
 	private CreateLinks createLinks;
 	
+	@Autowired
+	private UserSecurity userSecurity; 
+	
 	public UsuarioDTOAssembler() {
 		super(UsuarioController.class, UsuarioDTO.class);
 	}
@@ -30,11 +34,11 @@ public class UsuarioDTOAssembler extends RepresentationModelAssemblerSupport<Usu
     	UsuarioDTO usuarioDto = createModelWithId(usuario.getId(),usuario);
     	modelMapper.map(usuario, usuarioDto);
     	
-    	usuarioDto.add(createLinks.linkToUsuarios("usuarios"));
+    	if (userSecurity.podeConsultarUsuariosGruposPermissoes()) {
+    		usuarioDto.add(createLinks.linkToUsuarios("usuarios"));
+    		usuarioDto.add(createLinks.linkToGruposUsuario(usuario.getId(), "grupos-usuario"));
+		}
     	
-    	usuarioDto.add(createLinks.linkToGruposUsuario(usuario.getId(), "grupos-usuario"));
-        
-    			
     	return usuarioDto;
     }
     

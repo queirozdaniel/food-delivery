@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -19,20 +20,46 @@ public class RootEntryPointController {
 	@Autowired
 	private CreateLinks createLinks;
 	
+	@Autowired
+	private UserSecurity userSecurity;
+	
 	@GetMapping
 	public RootEntryPointModel root() {
 		var rootEntryPointModel = new RootEntryPointModel();
 		
-		rootEntryPointModel.add(createLinks.linkToCozinhas("cozinhas"));
-		rootEntryPointModel.add(createLinks.linksToPedidos("pedidos"));
-		rootEntryPointModel.add(createLinks.linkToRestaurantes("restaurantes"));
-		rootEntryPointModel.add(createLinks.linkToFormasPagamento("formas-pagamento"));
-		rootEntryPointModel.add(createLinks.linkToGrupos("grupos"));
-		rootEntryPointModel.add(createLinks.linkToUsuarios("usuarios"));
-		rootEntryPointModel.add(createLinks.linkToPermissoes("permissoes"));
-		rootEntryPointModel.add(createLinks.linkToEstados("estado"));
-		rootEntryPointModel.add(createLinks.linkToCidades("cidades"));
-		rootEntryPointModel.add(createLinks.linkToEstatisticas("estatisticas"));
+		if (userSecurity.podeConsultarCozinhas()) {
+			rootEntryPointModel.add(createLinks.linkToCozinhas("cozinhas"));
+	    }
+	    
+	    if (userSecurity.podePesquisarPedidos()) {
+	    	rootEntryPointModel.add(createLinks.linksToPedidos("pedidos"));
+	    }
+	    
+	    if (userSecurity.podeConsultarRestaurantes()) {
+	    	rootEntryPointModel.add(createLinks.linkToRestaurantes("restaurantes"));
+	    }
+	    
+	    if (userSecurity.podeConsultarUsuariosGruposPermissoes()) {
+	    	rootEntryPointModel.add(createLinks.linkToGrupos("grupos"));
+	    	rootEntryPointModel.add(createLinks.linkToUsuarios("usuarios"));
+	    	rootEntryPointModel.add(createLinks.linkToPermissoes("permissoes"));
+	    }
+	    
+	    if (userSecurity.podeConsultarFormasPagamento()) {
+	    	rootEntryPointModel.add(createLinks.linkToFormasPagamento("formas-pagamento"));
+	    }
+	    
+	    if (userSecurity.podeConsultarEstados()) {
+	    	rootEntryPointModel.add(createLinks.linkToEstados("estado"));
+	    }
+	    
+	    if (userSecurity.podeConsultarCidades()) {
+	    	rootEntryPointModel.add(createLinks.linkToCidades("cidades"));
+	    }
+	    
+	    if (userSecurity.podeConsultarEstatisticas()) {
+	    	rootEntryPointModel.add(createLinks.linkToEstatisticas("estatisticas"));
+	    }
 		
 		return rootEntryPointModel;
 	}

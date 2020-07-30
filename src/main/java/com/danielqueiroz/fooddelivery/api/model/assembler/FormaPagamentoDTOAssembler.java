@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.danielqueiroz.fooddelivery.api.controller.FormaPagamentoController;
 import com.danielqueiroz.fooddelivery.api.model.FormaPagamentoDTO;
 import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.FormaPagamento;
 
 @Component
@@ -20,6 +21,9 @@ public class FormaPagamentoDTOAssembler extends RepresentationModelAssemblerSupp
 	@Autowired
     private CreateLinks createLinks;
     
+	@Autowired
+	private UserSecurity userSecurity;
+	
     public FormaPagamentoDTOAssembler() {
         super(FormaPagamentoController.class, FormaPagamentoDTO.class);
     }
@@ -28,18 +32,22 @@ public class FormaPagamentoDTOAssembler extends RepresentationModelAssemblerSupp
     public FormaPagamentoDTO toModel(FormaPagamento formaPagamento) {
     	FormaPagamentoDTO formaPagamentoModel = 
                 createModelWithId(formaPagamento.getId(), formaPagamento);
-        
         modelMapper.map(formaPagamento, formaPagamentoModel);
-        
-        formaPagamentoModel.add(createLinks.linkToFormasPagamento("formasPagamento"));
+
+        if (userSecurity.podeConsultarFormasPagamento()) {
+        	formaPagamentoModel.add(createLinks.linkToFormasPagamento("formasPagamento"));
+		}
         
         return formaPagamentoModel;
     }
     
     @Override
     public CollectionModel<FormaPagamentoDTO> toCollectionModel(Iterable<? extends FormaPagamento> entities) {
-        return super.toCollectionModel(entities)
-            .add(createLinks.linkToFormasPagamento());
+    	CollectionModel<FormaPagamentoDTO> collectionModel = super.toCollectionModel(entities);
+        if (userSecurity.podeConsultarFormasPagamento()) {
+            collectionModel.add(createLinks.linkToFormasPagamento());
+        }
+        return collectionModel;
     }  
 	
 }

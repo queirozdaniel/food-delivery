@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.danielqueiroz.fooddelivery.api.controller.RestauranteProdutoFotoController;
 import com.danielqueiroz.fooddelivery.api.model.FotoProdutoDTO;
 import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.FotoProduto;
 
 @Component
@@ -19,6 +20,9 @@ public class FotoDTOAssembler extends RepresentationModelAssemblerSupport<FotoPr
 	@Autowired
 	private CreateLinks createLinks;
 	
+	@Autowired
+	private UserSecurity userSecurity;
+	
 	public FotoDTOAssembler() {
 		super(RestauranteProdutoFotoController.class, FotoProdutoDTO.class);
 	}
@@ -27,13 +31,15 @@ public class FotoDTOAssembler extends RepresentationModelAssemblerSupport<FotoPr
 	public FotoProdutoDTO toModel(FotoProduto fotoProduto) {
 		FotoProdutoDTO fotoProdutoDto = modelMapper.map(fotoProduto, FotoProdutoDTO.class);
 		
-		fotoProdutoDto.add(createLinks.linkToFotoProduto(
-				fotoProduto.getRestauranteId(), fotoProduto.getProduto().getId()));
-        
-		fotoProdutoDto.add(createLinks.linkToProduto(
-				fotoProduto.getRestauranteId(), fotoProduto.getProduto().getId(), "produto"));
-	
-        return fotoProdutoDto;
+		if (userSecurity.podeConsultarRestaurantes()) {
+			fotoProdutoDto.add(createLinks.linkToFotoProduto(
+					fotoProduto.getRestauranteId(), fotoProduto.getProduto().getId()));
+			
+			fotoProdutoDto.add(createLinks.linkToProduto(
+					fotoProduto.getRestauranteId(), fotoProduto.getProduto().getId(), "produto"));
+		}
+
+		return fotoProdutoDto;
 	}
     
 }

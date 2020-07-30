@@ -32,20 +32,10 @@ public class PedidoDTOAssembler extends RepresentationModelAssemblerSupport<Pedi
 		PedidoDTO pedidoDto = createModelWithId(pedido.getCodigo(), pedido);
 		modelMapper.map(pedido, pedidoDto);
 
-		pedidoDto.add(createLinks.linksToPedidos("pedidos"));
+		if (userSecurity.podePesquisarPedidos()) {
+			pedidoDto.add(createLinks.linksToPedidos("pedidos"));
+		}
 		
-		pedidoDto.getRestaurante().add(createLinks.linkToRestaurante(pedido.getRestaurante().getId()));
-		
-
-		pedidoDto.getCliente()
-				.add(createLinks.linkToUsuario(pedido.getCliente().getId()));
-
-		pedidoDto.getFormaPagamento()
-				.add(createLinks.linkToFormaPagamento(pedido.getFormaPagamento().getId()));
-
-		pedidoDto.getEnderecoEntrega().getCidade()
-				.add(createLinks.linkToCidade(pedido.getEnderecoEntrega().getCidade().getId()));
-
 		if (userSecurity.podeGerenciarPedidos(pedidoDto.getCodigo())) {
 			if (pedido.podeSerConfirmado()) {
 				pedidoDto.add(createLinks.linkToConfirmacaoPedido(pedido.getCodigo(), "confirmar"));
@@ -55,17 +45,36 @@ public class PedidoDTOAssembler extends RepresentationModelAssemblerSupport<Pedi
 				pedidoDto.add(createLinks.linkToCancelamentoPedido(pedido.getCodigo(), "cancelar"));
 			}
 			
-			
 			if (pedido.podeSerEntregue()) {
 				pedidoDto.add(createLinks.linkToEntregaPedido(pedido.getCodigo(), "entregar"));
 			}
+		}	
+		
+		if (userSecurity.podeConsultarRestaurantes()) {
+			pedidoDto.getRestaurante().add(createLinks.linkToRestaurante(pedido.getRestaurante().getId()));
+		}
+
+		if (userSecurity.podeConsultarUsuariosGruposPermissoes()) {
+			pedidoDto.getCliente()
+			.add(createLinks.linkToUsuario(pedido.getCliente().getId()));
 		}
 		
+		if (userSecurity.podeConsultarFormasPagamento()) {
+			pedidoDto.getFormaPagamento()
+			.add(createLinks.linkToFormaPagamento(pedido.getFormaPagamento().getId()));
+		}
+		
+		if (userSecurity.podeConsultarCidades()) {
+			pedidoDto.getEnderecoEntrega().getCidade()
+			.add(createLinks.linkToCidade(pedido.getEnderecoEntrega().getCidade().getId()));
+		}
 
-		pedidoDto.getItens().forEach(item -> {
-			item.add(createLinks.linkToProduto(
-	                pedido.getRestaurante().getId(), item.getProdutoId(), "produto"));
-		});
+		if (userSecurity.podeConsultarRestaurantes()) {
+			pedidoDto.getItens().forEach(item -> {
+				item.add(createLinks.linkToProduto(
+						pedido.getRestaurante().getId(), item.getProdutoId(), "produto"));
+			});
+		}
 
 		return pedidoDto;
 	}

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.danielqueiroz.fooddelivery.api.model.PermissaoDTO;
 import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Permissao;
 
 @Component
@@ -19,6 +20,9 @@ public class PermissaoDTOAssembler implements RepresentationModelAssembler<Permi
 	@Autowired
 	private CreateLinks createLinks;
 
+	@Autowired
+	private UserSecurity userSecurity;
+
 	@Override
 	public PermissaoDTO toModel(Permissao permissao) {
 		PermissaoDTO permissaoDto = modelMapper.map(permissao, PermissaoDTO.class);
@@ -27,7 +31,11 @@ public class PermissaoDTOAssembler implements RepresentationModelAssembler<Permi
 
 	@Override
 	public CollectionModel<PermissaoDTO> toCollectionModel(Iterable<? extends Permissao> entities) {
-		return RepresentationModelAssembler.super.toCollectionModel(entities).add(createLinks.linkToPermissoes());
+		CollectionModel<PermissaoDTO> collectionModel = RepresentationModelAssembler.super.toCollectionModel(entities);
+		if (userSecurity.podeConsultarUsuariosGruposPermissoes()) {
+			collectionModel.add(createLinks.linkToPermissoes());
+		}
+		return collectionModel;
 	}
 
 }

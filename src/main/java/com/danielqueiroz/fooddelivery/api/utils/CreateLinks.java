@@ -323,6 +323,19 @@ public class CreateLinks {
 	            .desassociar(usuarioId, grupoId)).withRel(rel);
 	} 
 	
+	public Link linkToPedidos(String rel) {
+		TemplateVariables filtroVariables = new TemplateVariables(
+				new TemplateVariable("clienteId", VariableType.REQUEST_PARAM),
+				new TemplateVariable("restauranteId", VariableType.REQUEST_PARAM),
+				new TemplateVariable("dataCriacaoInicio", VariableType.REQUEST_PARAM),
+				new TemplateVariable("dataCriacaoFim", VariableType.REQUEST_PARAM));
+		
+		String pedidosUrl = WebMvcLinkBuilder.linkTo(PedidoController.class).toUri().toString();
+		
+		return new Link(UriTemplate.of(pedidosUrl, 
+				PAGINACAO_VARIABLES.concat(filtroVariables)), rel);
+	}
+	
 	public Link linkToEstatisticas(String rel) {
 	    return WebMvcLinkBuilder.linkTo(EstatisticasController.class).withRel(rel);
 	}

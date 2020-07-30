@@ -17,6 +17,7 @@ import com.danielqueiroz.fooddelivery.api.model.UsuarioDTO;
 import com.danielqueiroz.fooddelivery.api.model.assembler.UsuarioDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.RestauranteUsuarioResponsavelControllerOpenApi;
 import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 import com.danielqueiroz.fooddelivery.domain.service.RestauranteService;
 
@@ -32,6 +33,9 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
 	
 	@Autowired
 	private CreateLinks responsavelLinks;
+	
+	@Autowired
+	private UserSecurity userSecurity;
 
 	@Override
 	@GetMapping
@@ -39,14 +43,16 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
 		Restaurante restaurante = restauranteService.buscarPorId(restauranteId);
 
 		CollectionModel<UsuarioDTO> usuariosDto = usuarioDTOAssembler.toCollectionModel(restaurante.getResponsaveis())
-				.removeLinks()
-				.add(responsavelLinks.linkToResponsaveisRestaurante(restauranteId))
-				.add(responsavelLinks.linkToRestauranteResponsavelAssociacao(restauranteId, "associar"));
-		
-		usuariosDto.getContent().stream().forEach(usuario -> {
-			usuariosDto.add(responsavelLinks.linkToRestauranteResponsavelDesassociacao(restauranteId, usuario.getId(), "desassociar"));
-		});
-		
+				.removeLinks();
+		usuariosDto.add(responsavelLinks.linkToResponsaveisRestaurante(restauranteId));
+
+		if (userSecurity.podeGerenciarCadastroRestaurantes()) {
+			usuariosDto.add(responsavelLinks.linkToRestauranteResponsavelAssociacao(restauranteId, "associar"));
+			
+			usuariosDto.getContent().stream().forEach(usuario -> {
+				usuariosDto.add(responsavelLinks.linkToRestauranteResponsavelDesassociacao(restauranteId, usuario.getId(), "desassociar"));
+			});
+		}
 		return usuariosDto;
 	}
 

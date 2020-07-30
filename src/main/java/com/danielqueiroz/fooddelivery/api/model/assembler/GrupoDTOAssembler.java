@@ -9,17 +9,21 @@ import org.springframework.stereotype.Component;
 import com.danielqueiroz.fooddelivery.api.controller.GrupoController;
 import com.danielqueiroz.fooddelivery.api.model.GrupoDTO;
 import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Grupo;
 
 @Component
-public class GrupoDTOAssembler extends RepresentationModelAssemblerSupport<Grupo, GrupoDTO>{
+public class GrupoDTOAssembler extends RepresentationModelAssemblerSupport<Grupo, GrupoDTO> {
 
 	@Autowired
 	private ModelMapper modelMapper;
 
 	@Autowired
 	private CreateLinks createLinks;
-	
+
+	@Autowired
+	private UserSecurity userSecurity;
+
 	public GrupoDTOAssembler() {
 		super(GrupoController.class, GrupoDTO.class);
 	}
@@ -27,19 +31,26 @@ public class GrupoDTOAssembler extends RepresentationModelAssemblerSupport<Grupo
 	@Override
 	public GrupoDTO toModel(Grupo grupo) {
 		GrupoDTO grupoDto = createModelWithId(grupo.getId(), grupo);
-        modelMapper.map(grupo, grupoDto);
-        
-        grupoDto.add(createLinks.linkToGrupos("grupos"));
-        
-        grupoDto.add(createLinks.linkToGrupoPermissoes(grupo.getId(), "permissoes"));
-        
-        return grupoDto;
+		modelMapper.map(grupo, grupoDto);
+
+		if (userSecurity.podeConsultarUsuariosGruposPermissoes()) {
+			grupoDto.add(createLinks.linkToGrupos("grupos"));
+
+			grupoDto.add(createLinks.linkToGrupoPermissoes(grupo.getId(), "permissoes"));
+		}
+
+		return grupoDto;
 	}
-	
-	 @Override
-	    public CollectionModel<GrupoDTO> toCollectionModel(Iterable<? extends Grupo> entities) {
-	        return super.toCollectionModel(entities)
-	                .add(createLinks.linkToGrupos());
-	    }
-	
+
+	@Override
+	public CollectionModel<GrupoDTO> toCollectionModel(Iterable<? extends Grupo> entities) {
+		CollectionModel<GrupoDTO> collectionModel = super.toCollectionModel(entities);
+
+		if (userSecurity.podeConsultarUsuariosGruposPermissoes()) {
+			collectionModel.add(createLinks.linkToGrupos());
+		}
+
+		return collectionModel;
+	}
+
 }

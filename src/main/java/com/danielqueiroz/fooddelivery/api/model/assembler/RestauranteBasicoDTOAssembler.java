@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.danielqueiroz.fooddelivery.api.controller.RestauranteController;
 import com.danielqueiroz.fooddelivery.api.model.RestauranteBasicoDTO;
 import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 
 @Component
@@ -21,6 +22,9 @@ public class RestauranteBasicoDTOAssembler
     @Autowired
     private CreateLinks createLinks;
     
+    @Autowired
+	private UserSecurity userSecurity; 
+    
     public RestauranteBasicoDTOAssembler() {
         super(RestauranteController.class, RestauranteBasicoDTO.class);
     }
@@ -29,20 +33,26 @@ public class RestauranteBasicoDTOAssembler
     public RestauranteBasicoDTO toModel(Restaurante restaurante) {
     	RestauranteBasicoDTO restauranteModel = createModelWithId(
                 restaurante.getId(), restaurante);
-        
         modelMapper.map(restaurante, restauranteModel);
+
+        if (userSecurity.podeConsultarRestaurantes()) {
+        	restauranteModel.add(createLinks.linkToRestaurantes("restaurantes"));
+        }
         
-        restauranteModel.add(createLinks.linkToRestaurantes("restaurantes"));
-        
-        restauranteModel.getCozinha().add(
-                createLinks.linkToCozinha(restaurante.getCozinha().getId()));
+        if (userSecurity.podeConsultarCozinhas()) {
+        	restauranteModel.getCozinha().add(
+        			createLinks.linkToCozinha(restaurante.getCozinha().getId()));
+        }
         
         return restauranteModel;
     }
     
     @Override
     public CollectionModel<RestauranteBasicoDTO> toCollectionModel(Iterable<? extends Restaurante> entities) {
-        return super.toCollectionModel(entities)
-                .add(createLinks.linkToRestaurantes());
+    	CollectionModel<RestauranteBasicoDTO> collectionModel = super.toCollectionModel(entities);
+        if (userSecurity.podeConsultarRestaurantes()) {
+            collectionModel.add(createLinks.linkToRestaurantes());
+        }
+        return collectionModel;
     }   
 }  

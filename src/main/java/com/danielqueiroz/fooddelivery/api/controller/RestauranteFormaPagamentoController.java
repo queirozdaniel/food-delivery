@@ -18,6 +18,7 @@ import com.danielqueiroz.fooddelivery.api.model.assembler.FormaPagamentoDTOAssem
 import com.danielqueiroz.fooddelivery.api.openapi.controller.RestauranteFormaPagamentoControllerOpenApi;
 import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Restaurante;
 import com.danielqueiroz.fooddelivery.domain.service.RestauranteService;
 
@@ -34,6 +35,9 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
 	@Autowired
 	private CreateLinks createLinks;
 	
+	@Autowired
+	private UserSecurity userSecurity;
+	
 	@CheckSecurity.Restaurantes.PodeConsultar
 	@Override
 	@GetMapping
@@ -41,14 +45,17 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
 		Restaurante restaurantes = restauranteService.buscarPorId(restauranteId);
 
 		CollectionModel<FormaPagamentoDTO> formasPagamentoDto = formaPagamentoDtoAssembler.toCollectionModel(restaurantes.getFormasPagamento())
-				.removeLinks()
-	            .add(createLinks.linkToRestauranteFormasPagamento(restauranteId))
-	            .add(createLinks.linkToRestauranteFormaPagamentoAssociacao(restauranteId, "associar"));
+				.removeLinks();
+		formasPagamentoDto.add(createLinks.linkToRestauranteFormasPagamento(restauranteId));
 		
-		formasPagamentoDto.getContent().forEach(formaPagamento -> {
-			formaPagamento.add(createLinks
-					.linkToRestauranteFormaPagamentoDesassociacao(restauranteId, formaPagamento.getId(), "desassociar"));
-		});
+		if (userSecurity.podeGerenciarFuncionamentoRestaurantes(restauranteId)) {
+			formasPagamentoDto.add(createLinks.linkToRestauranteFormaPagamentoAssociacao(restauranteId, "associar"));
+			
+			formasPagamentoDto.getContent().forEach(formaPagamento -> {
+				formaPagamento.add(createLinks
+						.linkToRestauranteFormaPagamentoDesassociacao(restauranteId, formaPagamento.getId(), "desassociar"));
+			});
+		}
 		
 		return formasPagamentoDto;
 	}

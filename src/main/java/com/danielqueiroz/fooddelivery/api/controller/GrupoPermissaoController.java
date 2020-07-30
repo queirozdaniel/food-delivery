@@ -18,6 +18,7 @@ import com.danielqueiroz.fooddelivery.api.model.assembler.PermissaoDTOAssembler;
 import com.danielqueiroz.fooddelivery.api.openapi.controller.GrupoPermissaoControllerOpenApi;
 import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
 import com.danielqueiroz.fooddelivery.core.security.CheckSecurity;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Grupo;
 import com.danielqueiroz.fooddelivery.domain.service.GrupoService;
 
@@ -33,6 +34,9 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
 
 	@Autowired
 	private CreateLinks createLinks;
+	
+	@Autowired
+	private UserSecurity userSecurity; 
 
 	@CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
 	@Override
@@ -41,14 +45,17 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
 		Grupo grupo = grupoService.buscarPorId(grupoId);
 
 		CollectionModel<PermissaoDTO> permissoesDto = permissaoDTOAssembler.toCollectionModel(grupo.getPermissoes())
-				.removeLinks().add(createLinks.linkToGrupoPermissoes(grupoId))
-				.add(createLinks.linkToGrupoPermissaoAssociacao(grupoId, "associar"));
+				.removeLinks();
+		
+		permissoesDto.add(createLinks.linkToGrupoPermissoes(grupoId));
+		if (userSecurity.podeEditarUsuariosGruposPermissoes()) {
+			permissoesDto.add(createLinks.linkToGrupoPermissaoAssociacao(grupoId, "associar"));
 
-		permissoesDto.getContent().forEach(permissaoDto -> {
-			permissaoDto
-					.add(createLinks.linkToGrupoPermissaoDesassociacao(grupoId, permissaoDto.getId(), "desassociar"));
-		});
-
+			permissoesDto.getContent().forEach(permissaoDto -> {
+				permissaoDto
+				.add(createLinks.linkToGrupoPermissaoDesassociacao(grupoId, permissaoDto.getId(), "desassociar"));
+			});
+		}
 		return permissoesDto;
 	}
 

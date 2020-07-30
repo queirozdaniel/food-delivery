@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.danielqueiroz.fooddelivery.api.controller.EstadoController;
 import com.danielqueiroz.fooddelivery.api.model.EstadoDTO;
 import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Estado;
 
 @Component
@@ -19,6 +20,9 @@ public class EstadoDTOAssembler extends RepresentationModelAssemblerSupport<Esta
 
 	@Autowired
 	private CreateLinks createLinks;
+	
+	@Autowired
+	private UserSecurity userSecurity;
 
 	public EstadoDTOAssembler() {
 		super(EstadoController.class, EstadoDTO.class);
@@ -29,14 +33,19 @@ public class EstadoDTOAssembler extends RepresentationModelAssemblerSupport<Esta
 		EstadoDTO estadoDto = createModelWithId(estado.getId(), estado);
         modelMapper.map(estado, estadoDto);
         
-        estadoDto.add(createLinks.linkToEstados("estados"));
+        if (userSecurity.podeConsultarEstados()) {
+        	estadoDto.add(createLinks.linkToEstados("estados"));
+		}
         
         return estadoDto;
     }
     
     @Override
     public CollectionModel<EstadoDTO> toCollectionModel(Iterable<? extends Estado> entities) {
-        return super.toCollectionModel(entities)
-            .add(createLinks.linkToEstados());
+    	CollectionModel<EstadoDTO> collectionModel = super.toCollectionModel(entities);
+        if (userSecurity.podeConsultarEstados()) {
+            collectionModel.add(createLinks.linkToEstados());
+        }
+        return collectionModel;
     } 
 }

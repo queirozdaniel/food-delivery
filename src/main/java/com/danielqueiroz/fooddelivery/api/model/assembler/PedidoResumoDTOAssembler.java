@@ -3,13 +3,12 @@ package com.danielqueiroz.fooddelivery.api.model.assembler;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import com.danielqueiroz.fooddelivery.api.controller.PedidoController;
-import com.danielqueiroz.fooddelivery.api.controller.RestauranteController;
-import com.danielqueiroz.fooddelivery.api.controller.UsuarioController;
 import com.danielqueiroz.fooddelivery.api.model.PedidoResumoDTO;
+import com.danielqueiroz.fooddelivery.api.utils.CreateLinks;
+import com.danielqueiroz.fooddelivery.core.security.UserSecurity;
 import com.danielqueiroz.fooddelivery.domain.model.Pedido;
 
 @Component
@@ -17,6 +16,12 @@ public class PedidoResumoDTOAssembler extends RepresentationModelAssemblerSuppor
 
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private CreateLinks createLinks;
+	
+	@Autowired
+	private UserSecurity userSecurity;
 
 	public PedidoResumoDTOAssembler() {
 		super(PedidoController.class, PedidoResumoDTO.class);
@@ -28,13 +33,18 @@ public class PedidoResumoDTOAssembler extends RepresentationModelAssemblerSuppor
 		PedidoResumoDTO pedidoDto = createModelWithId(pedido.getCodigo(), pedido);
         modelMapper.map(pedido, pedidoDto);
         
-        pedidoDto.add(WebMvcLinkBuilder.linkTo(PedidoController.class).withRel("pedidos"));
+        if (userSecurity.podePesquisarPedidos()) {
+        	pedidoDto.add(createLinks.linkToPedidos("pedidos"));
+        }
         
-        pedidoDto.getRestaurante().add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RestauranteController.class)
-                .buscarPorId(pedido.getRestaurante().getId())).withSelfRel());
-        
-        pedidoDto.getCliente().add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class)
-                .buscar(pedido.getCliente().getId())).withSelfRel());
+        if (userSecurity.podeConsultarRestaurantes()) {
+        	pedidoDto.getRestaurante().add(
+        			createLinks.linkToRestaurante(pedido.getRestaurante().getId()));
+        }
+
+        if (userSecurity.podeConsultarUsuariosGruposPermissoes()) {
+        	pedidoDto.getCliente().add(createLinks.linkToUsuario(pedido.getCliente().getId()));
+        }
         
         return pedidoDto;
     }
