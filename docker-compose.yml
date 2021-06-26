@@ -1,0 +1,39 @@
+version: "3.9"
+networks:
+  food-delivery-network:
+    driver: bridge
+    
+services:
+  food-delivery-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3308:3308"
+    networks:
+      - food-delivery-network
+      
+  food-delivery-redis:
+    image: redis:6.2.1-alpine
+    networks:
+      - food-delivery-network
+
+  food-delivery-api:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    image: food-delivery-api
+    container_name: food-delivery-api
+    volumes:
+      - /tmp
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: food-delivery-mysql
+      SPRING_SESSION_STORE_TYPE: redis
+      SPRING_REDIS_HOST: food-delivery-redis
+      SPRING_PROFILES_ACTIVE: development
+    networks:
+      - food-delivery-network
+    depends_on:
+      - food-delivery-mysql

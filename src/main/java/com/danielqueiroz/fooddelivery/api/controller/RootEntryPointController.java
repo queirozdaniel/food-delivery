@@ -22,8 +22,8 @@ public class RootEntryPointController {
 	
 	@Autowired
 	private UserSecurity userSecurity;
-	
-	@GetMapping
+
+	@GetMapping("/")
 	public RootEntryPointModel root() {
 		var rootEntryPointModel = new RootEntryPointModel();
 		

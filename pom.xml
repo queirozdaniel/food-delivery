@@ -20,6 +20,8 @@
 		<spring-oauth2-version>2.3.7.RELEASE</spring-oauth2-version>
 		<spring-jwt-version>1.0.11.RELEASE</spring-jwt-version>
 		<logback-ext-loggly.version>0.1.5</logback-ext-loggly.version>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
 	</properties>
 
 	<dependencies>
